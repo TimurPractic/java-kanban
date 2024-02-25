@@ -1,9 +1,10 @@
 public class Subtask extends Task{
-
     private int epicId;
 
-    public Subtask(int id, String title, TaskStatus status){
-        super(id, title, status);
+    public Subtask(String title, int epicID){
+        super(title);
+        this.id = TaskManager.generateNewID();
+        this.status = TaskStatus.NEW;
+        this.epicId = epicID;
     }
-
 }

@@ -2,28 +2,21 @@ public class Task {
     public TaskStatus status;
     public int id;
     public String title;
+    public String description;
 
-    public Task(int id, String title, TaskStatus status){
-        this.id = id;
-        this.status = status;
-        this.title = title;
+    public Task(String title){
+        this.id = TaskManager.generateNewID();
+        this.status = TaskStatus.NEW;
+        this.title = title ;
     }
-    public TaskStatus getStatus() {
-        return status;
-    }
-    public void setStatus(TaskStatus status) {
-        this.status = status;
-    }
-    public int getId() {
-        return id;
-    }
-    public void setId(int id) {
-        this.id = id;
-    }
-    public String getTitle() {
-        return title;
-    }
-    public void setTitle(String title) {
-        this.title = title;
+
+    @Override
+    public String toString() {
+        return "Task{" +
+                "status=" + status +
+                ", id=" + id +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                '}';
     }
 }

@@ -2,43 +2,49 @@ import java.util.HashMap;
 import java.util.Scanner;
 public class TaskManager {
     Scanner scanner = new Scanner(System.in);
-    HashMap<Integer, Task> tasks;
-    HashMap<Integer, Subtask> subtasks;
-    HashMap<Integer, Epic> epics;
+    HashMap<Integer, Task> tasks = new HashMap<>();
+    //  HashMap<Integer, Subtask> subtasks = new HashMap<>();
+    //  HashMap<Integer, Epic> epics = new HashMap<>();
     static int idSequence;
 ////////////////////////////////////////////////////////////////////////// нужно сделать методы
-// получать задачи по идентификатору;
+
 // выводить списки задач разных типов
 // Получение списка всех подзадач определённого эпика. - для эпика
 
-/////////////////////////////////////////////////////////////////// Manager Methods
-    static int generateNewID(){
+    /////////////////////////////////////////////////////////////////// Manager Methods
+    static int generateNewID() {
         return idSequence++;
     }
 /////////////////////////////////////////////////////////////// Task methods
-    public Task addTask(Task newTask){
-        newTask.id = generateNewID();
-        tasks.put(newTask.id, newTask);
-        return newTask;
+
+    public void addTask(String title) {
+        Task newTask = new Task(title); // Создаем новый объект Task
+        tasks.put(newTask.id, newTask); // Добавляем объект Task в HashMap с использованием ID в качестве ключа
+        System.out.println("Создали таску с номером " + newTask.id);
     }
-    public Task updateTask(Task updatedTask){
-        Task currentTask = tasks.get(updatedTask.id);
-        tasks.put(updatedTask.id, currentTask);
-        return updatedTask;
-    }
-    public Task deleteTask(int id){
-        Task currentTask = tasks.get(id);
+    public void deleteTask(int id) {
+        Task deletedTask = tasks.get(id);
         tasks.remove(id);
-        return currentTask;
     }
-    public Task getTask(Task updatedTask){
-        Task currentTask = tasks.get(updatedTask.id);
-        return currentTask;
+
+    public Task updateTask(Task task,TaskStatus status, String title, String description) {
+        if (status != null) {
+            task.status = status;
+        }
+        if (title != null) {
+            task.title = title;
+        }
+        if (description != null) {
+            task.description = description;
+        }
+        return task;
     }
-    public void deleteAllTasks(){
+
+    public void deleteAllTasks() {
         tasks.clear();
     }
-    //////////////////////////////////////////////////////////////////// Subtask methods
+}
+  /*  //////////////////////////////////////////////////////////////////// Subtask methods
     public Subtask addSubTask(Subtask newTask){
         newTask.id = generateNewID();
         subtasks.put(newTask.id, newTask);
@@ -72,7 +78,7 @@ public class TaskManager {
         epics.put(updatedTask.id, currentTask);
         return updatedTask;
     }*/
-    public Epic deleteEpic(int id){
+    /*public Epic deleteEpic(int id){
         Epic currentTask = epics.get(id);
         epics.remove(id);
         return currentTask;
@@ -85,4 +91,4 @@ public class TaskManager {
         epics.clear();
     }
 
-}
+}*/
