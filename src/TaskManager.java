@@ -63,7 +63,7 @@ public class TaskManager {
         Epic chosenEpic = epics.get(epic.id);
         System.out.println(chosenEpic.arrayST);
     }
-    public void checkEpicStatus(Epic epic){
+    public void checkEpicStatusForDone(Epic epic){
         Epic chosenEpic = epics.get(epic.id);
         boolean isReady = true;
         for (Subtask sub : chosenEpic.arrayST){
@@ -79,17 +79,28 @@ public class TaskManager {
         }
     }
 
+    public void checkEpicStatusForProgress(Epic epic){
+        Epic chosenEpic = epics.get(epic.id);
+        boolean isInProgress = false;
+        for (Subtask sub : chosenEpic.arrayST){
+            if(sub.status.equals(TaskStatus.IN_PROGRESS)){
+                isInProgress = true;
+                break;
+            }
+        }
+        if(isInProgress){
+            chosenEpic.status = TaskStatus.IN_PROGRESS;
+        }
+    }
+
  //////////////////////////////////////////////////// Subtask methods//////////////////////////////////////////////////
     public void addSubTask(String title,int epicID) {
         Subtask newSubtask = new Subtask(title, epicID);
         subtasks.put(newSubtask.id, newSubtask);
+        Epic chosenEpic = epics.get(epicID);
+        chosenEpic.arrayST.add(newSubtask);
         System.out.println("Создали подзадачу с номером " + newSubtask.id + " и названием '" + newSubtask.title +
                 "'. Она принадлежит эпику номер " + epicID);
-    }
-    public void assignSubtaskToEpic(Subtask subtask, Epic epic){
-        Epic chosenEpic = epics.get(epic.id);
-        Subtask chosenSubtask = subtasks.get(subtask.id);
-        chosenEpic.arrayST.add(chosenSubtask);
     }
     public void updateSubTask(Subtask subtask,TaskStatus status, String title, String description) {
         if (status != null) {
