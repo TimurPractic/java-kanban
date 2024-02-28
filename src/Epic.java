@@ -1,11 +1,21 @@
 import java.util.ArrayList;
 public class Epic extends Task{
-    public ArrayList<Subtask> arrayST;
+    private ArrayList<Subtask> arraySubTask;
+
+    private TaskManager taskManager = new TaskManager();
 
     public Epic(String title){
         super(title);
-        this.id = TaskManager.generateNewID();
-        this.status = TaskStatus.NEW;
-        this.arrayST = new ArrayList<>();
+        setId(taskManager.generateNewID());
+        setStatus(TaskStatus.NEW);
+        this.arraySubTask = new ArrayList<>();
+    }
+
+    public ArrayList<Subtask> getArraySubTask() {
+        return arraySubTask;
+    }
+
+    public void setArraySubTask(ArrayList<Subtask> arraySubTask) {
+        this.arraySubTask = arraySubTask;
     }
 }

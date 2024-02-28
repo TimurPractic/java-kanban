@@ -1,10 +1,19 @@
 public class Subtask extends Task{
-    public int epicId;
+    private int epicId;
 
-    public Subtask(String title, int epicID){
+    private TaskManager taskManager = new TaskManager();
+
+    public Subtask(String title){
         super(title);
-        this.id = TaskManager.generateNewID();
-        this.status = TaskStatus.NEW;
-        this.epicId = epicID;
+        setId(taskManager.generateNewID());
+        setStatus(TaskStatus.NEW);
+    }
+
+    public int getEpicId() {
+        return epicId;
+    }
+
+    public void setEpicId(int epicId) {
+        this.epicId = epicId;
     }
 }

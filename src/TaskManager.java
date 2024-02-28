@@ -1,73 +1,70 @@
+import java.util.ArrayList;
 import java.util.HashMap;
-//import java.util.Scanner;
+
 public class TaskManager {
-    //Scanner scanner = new Scanner(System.in);// в текущей реализации не используется,
-                                                // но нужен для корректной работы проета в целом, когда у него будет фронтенд
+
     HashMap<Integer, Task> tasks = new HashMap<>();
     HashMap<Integer, Subtask> subtasks = new HashMap<>();
     HashMap<Integer, Epic> epics = new HashMap<>();
-    static int idSequence;
+    private static int idSequence = 0; //этот id должен быть статичным, так как он принадлежит классу, а не экземпляру.
+    //в нём мы храним инкремент для проставления номера ID для всех тасков субтасков и эпиков.
+    // Их экземплярам он не принадлежит, но он в них и не находится, он в этом классе именно для этого.
 
 /////////////////////////////////////////// Manager Methods/////////////////////////////////////////////////////////
-    static int generateNewID() {
-        return idSequence++;
+    public int generateNewID() {
+        idSequence++;
+        return idSequence;
     }
 /////////////////////////////////////////// Task methods///////////////////////////////////////////////////////////
-    public void addTask(String title) {
-        Task newTask = new Task(title);
-        tasks.put(newTask.id, newTask);
-        System.out.println("Создали таску с номером " + newTask.id + " и названием '" + newTask.title +"'");
+    public void addTask(Task newTask) {
+        tasks.put(newTask.getId(), newTask);
+        System.out.println("Создали таску с номером " + newTask.getId() + " и названием '" + newTask.getTitle() +"'");
     }
-    public void deleteTask(int id) {
-        Task deletedTask = tasks.get(id);
-        tasks.remove(id);
-        System.out.println("Удалили таску с номером " + deletedTask.id);
+    public void deleteTask(Task newTask) {
+        tasks.remove(newTask.getId());
+        System.out.println("Удалили таску с номером " + newTask.getId());
     }
     public void updateTask(Task task,TaskStatus status, String title, String description) {
         if (status != null) {
-            task.status = status;
+            task.setStatus(status);
         }
         if (title != null) {
-            task.title = title;
+            task.setTitle(title);
         }
         if (description != null) {
-            task.description = description;
+            task.setDescription(description);
         }
     }
     public void deleteAllTasks() {
         tasks.clear();
     }
 /////////////////////////////////////////// Epic Methods///////////////////////////////////////////////////////////
-    public void addEpic(String title) {
-        Epic newEpic = new Epic(title);
-        epics.put(newEpic.id, newEpic);
-        System.out.println("Создали эпик с номером " + newEpic.id + " и названием '" + newEpic.title +"'");
+    public void addEpic(Epic newEpic) {
+        epics.put(newEpic.getId(), newEpic);
+        System.out.println("Создали эпик с номером " + newEpic.getId() + " и названием '" + newEpic.getTitle() +"'");
     }
-    public void deleteEpic(int id) {
-        Epic deletedEpic = epics.get(id);
-        epics.remove(id);
-        System.out.println("Удалили таску с номером " + deletedEpic.id);
+    public void deleteEpic(Epic newEpic) {
+        epics.remove(newEpic.getId());
+        System.out.println("Удалили эпик с номером " + newEpic.getId());
     }
     public void updateEpic(Epic epic, String title, String description) {
         if (title != null) {
-            epic.title = title;
+            epic.setTitle(title);
         }
         if (description != null) {
-            epic.description = description;
+            epic.setDescription(description);
         }
     }
     public void deleteAllEpics(){
         epics.clear();
     }
     public void showAllSubtask(Epic epic){
-        Epic chosenEpic = epics.get(epic.id);
-        System.out.println(chosenEpic.arrayST);
+        System.out.println(epic.getArraySubTask());
     }
     public void checkEpicStatusForDone(Epic epic){
-        Epic chosenEpic = epics.get(epic.id);
         boolean isReady = true;
-        for (Subtask sub : chosenEpic.arrayST){
-            if(!sub.status.equals(TaskStatus.DONE)){
+        for (Subtask sub : epic.getArraySubTask()){
+            if(!sub.getStatus().equals(TaskStatus.DONE)){
                 isReady = false;
                 break;
             } else {
@@ -75,48 +72,48 @@ public class TaskManager {
             }
         }
         if(isReady){
-            chosenEpic.status = TaskStatus.DONE;
+            epic.setStatus(TaskStatus.DONE);
         }
     }
 
     public void checkEpicStatusForProgress(Epic epic){
-        Epic chosenEpic = epics.get(epic.id);
         boolean isInProgress = false;
-        for (Subtask sub : chosenEpic.arrayST){
-            if(sub.status.equals(TaskStatus.IN_PROGRESS)){
+        for (Subtask sub : epic.getArraySubTask()){
+            if(sub.getStatus().equals(TaskStatus.IN_PROGRESS)){
                 isInProgress = true;
                 break;
             }
         }
         if(isInProgress){
-            chosenEpic.status = TaskStatus.IN_PROGRESS;
+            epic.setStatus(TaskStatus.IN_PROGRESS);
         }
     }
 
  //////////////////////////////////////////////////// Subtask methods//////////////////////////////////////////////////
-    public void addSubTask(String title,int epicID) {
-        Subtask newSubtask = new Subtask(title, epicID);
-        subtasks.put(newSubtask.id, newSubtask);
-        Epic chosenEpic = epics.get(epicID);
-        chosenEpic.arrayST.add(newSubtask);
-        System.out.println("Создали подзадачу с номером " + newSubtask.id + " и названием '" + newSubtask.title +
-                "'. Она принадлежит эпику номер " + epicID);
+    public void addSubTask(Subtask newSubTask, Epic epic) {
+        subtasks.put(newSubTask.getId(), newSubTask);
+        ArrayList chosenArray = epic.getArraySubTask();
+        chosenArray.add(newSubTask);
+        epic.setArraySubTask(chosenArray);
+        System.out.println("Создали подзадачу с номером " + newSubTask.getId() + " и названием '" + newSubTask.getTitle() +
+                "'. Она принадлежит эпику номер " + epic.getId());
     }
+
     public void updateSubTask(Subtask subtask,TaskStatus status, String title, String description) {
         if (status != null) {
-            subtask.status = status;
+            subtask.setStatus(status);
         }
         if (title != null) {
-            subtask.title = title;
+            subtask.setTitle(title);
         }
         if (description != null) {
-            subtask.description = description;
+            subtask.setDescription(description);
         }
     }
-    public void deleteSubTask(int id) {
-        Task deletedSubTask = subtasks.get(id);
-        subtasks.remove(id);
-        System.out.println("Удалили таску с номером " + deletedSubTask.id);
+
+    public void deleteSubTask(Subtask newSubTask) {
+        subtasks.remove(newSubTask);
+        System.out.println("Удалили субтаску с номером " + newSubTask.getId());
     }
 
     public void deleteAllSubTasks(){
