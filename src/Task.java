@@ -4,11 +4,7 @@ public class Task {
     private String title;
     private String description;
 
-    private TaskManager taskManager = new TaskManager();
-
     public Task(String title) {
-        setId(taskManager.generateNewID());
-        setStatus(TaskStatus.NEW);
         this.title = title ;
     }
 
@@ -53,4 +49,5 @@ public class Task {
     public void setDescription(String description) {
         this.description = description;
     }
+
 }

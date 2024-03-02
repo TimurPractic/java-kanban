@@ -3,20 +3,33 @@ import java.util.HashMap;
 
 public class TaskManager {
 
-    HashMap<Integer, Task> tasks = new HashMap<>();
-    HashMap<Integer, Subtask> subtasks = new HashMap<>();
-    HashMap<Integer, Epic> epics = new HashMap<>();
-    private static int idSequence = 0; //этот id должен быть статичным, так как он принадлежит классу, а не экземпляру.
-    //в нём мы храним инкремент для проставления номера ID для всех тасков субтасков и эпиков.
-    // Их экземплярам он не принадлежит, но он в них и не находится, он в этом классе именно для этого.
+    public HashMap<Integer, Task> getTasks() {
+        return tasks;
+    }
+
+    public HashMap<Integer, Subtask> getSubtasks() {
+        return subtasks;
+    }
+
+    public HashMap<Integer, Epic> getEpics() {
+        return epics;
+    }
+
+    private final HashMap<Integer, Task> tasks = new HashMap<>();
+    private final HashMap<Integer, Subtask> subtasks = new HashMap<>();
+    private final HashMap<Integer, Epic> epics = new HashMap<>();
+    private int idSequence = 0;
 
 /////////////////////////////////////////// Manager Methods/////////////////////////////////////////////////////////
-    public int generateNewID() {
+    private int generateNewID() {
         idSequence++;
         return idSequence;
     }
 /////////////////////////////////////////// Task methods///////////////////////////////////////////////////////////
     public void addTask(Task newTask) {
+        int newID = generateNewID();
+        newTask.setId(newID);
+        newTask.setStatus(TaskStatus.NEW);
         tasks.put(newTask.getId(), newTask);
         System.out.println("Создали таску с номером " + newTask.getId() + " и названием '" + newTask.getTitle() +"'");
     }
@@ -38,8 +51,17 @@ public class TaskManager {
     public void deleteAllTasks() {
         tasks.clear();
     }
+
+    public Task getTaskById(int id) {
+        Task task = tasks.get(id);
+        System.out.println(task);
+        return task;
+    }
 /////////////////////////////////////////// Epic Methods///////////////////////////////////////////////////////////
     public void addEpic(Epic newEpic) {
+        int newID = generateNewID();
+        newEpic.setId(newID);
+        newEpic.setStatus(TaskStatus.NEW);
         epics.put(newEpic.getId(), newEpic);
         System.out.println("Создали эпик с номером " + newEpic.getId() + " и названием '" + newEpic.getTitle() +"'");
     }
@@ -56,12 +78,14 @@ public class TaskManager {
         }
     }
     public void deleteAllEpics(){
+        subtasks.clear();// так как у нас не может существовать субтаски без эпиков,
+        // то удаление всех эпиков означает удаление всех субтасков
         epics.clear();
     }
-    public void showAllSubtask(Epic epic){
+    private void showAllSubtaskOfOneEpic(Epic epic){
         System.out.println(epic.getArraySubTask());
     }
-    public void checkEpicStatusForDone(Epic epic){
+    private void checkEpicStatusForDone(Epic epic){
         boolean isReady = true;
         for (Subtask sub : epic.getArraySubTask()){
             if(!sub.getStatus().equals(TaskStatus.DONE)){
@@ -76,7 +100,7 @@ public class TaskManager {
         }
     }
 
-    public void checkEpicStatusForProgress(Epic epic){
+    private void checkEpicStatusForProgress(Epic epic){
         boolean isInProgress = false;
         for (Subtask sub : epic.getArraySubTask()){
             if(sub.getStatus().equals(TaskStatus.IN_PROGRESS)){
@@ -89,14 +113,28 @@ public class TaskManager {
         }
     }
 
+    public Epic getEpicById(Integer id) {
+        if (epics.containsKey(id)) {
+            return epics.get(id);
+        } else {
+            System.out.println("Такого номера эпика не существует.");
+        }
+        return null;
+    }
+
  //////////////////////////////////////////////////// Subtask methods//////////////////////////////////////////////////
-    public void addSubTask(Subtask newSubTask, Epic epic) {
+    public void addSubTask(Subtask newSubTask) {
+        int newID = generateNewID();
+        newSubTask.setId(newID);
+        newSubTask.setStatus(TaskStatus.NEW);
         subtasks.put(newSubTask.getId(), newSubTask);
-        ArrayList chosenArray = epic.getArraySubTask();
+        Epic assignedEpic = getEpicById(newSubTask.getEpicId());
+        ArrayList chosenArray = assignedEpic.getArraySubTask();
         chosenArray.add(newSubTask);
-        epic.setArraySubTask(chosenArray);
+        assignedEpic.setArraySubTask(chosenArray);
+
         System.out.println("Создали подзадачу с номером " + newSubTask.getId() + " и названием '" + newSubTask.getTitle() +
-                "'. Она принадлежит эпику номер " + epic.getId());
+                "'. Она принадлежит эпику номер " + assignedEpic.getId());
     }
 
     public void updateSubTask(Subtask subtask,TaskStatus status, String title, String description) {
@@ -109,14 +147,38 @@ public class TaskManager {
         if (description != null) {
             subtask.setDescription(description);
         }
+        Epic currEpic = getEpicById(subtask.getEpicId());
+        checkEpicStatusForProgress(currEpic);
+        checkEpicStatusForDone(currEpic);
     }
 
-    public void deleteSubTask(Subtask newSubTask) {
+    public void deleteOneSubTask(int id) {
+        Subtask newSubTask = getSubtaskById(id);
+        //удалиться из эпика
+        Epic currEpic = getEpicById(newSubTask.getEpicId());
         subtasks.remove(newSubTask);
-        System.out.println("Удалили субтаску с номером " + newSubTask.getId());
+        //пересчитать статус эпика
+        checkEpicStatusForProgress(currEpic);
+        checkEpicStatusForDone(currEpic);
+
+        System.out.println("Удалили субтаску с номером " + id);
     }
 
     public void deleteAllSubTasks(){
+        //удалиться из эпика
+        ArrayList<Epic> epicsToDelete = new ArrayList<>();
+        for (Subtask subtask : subtasks.values()){
+            epicsToDelete.add(getEpicById(subtask.getEpicId()));
+        }
         subtasks.clear();
+        //пересчитать статус эпика
+        for (Epic epic : epicsToDelete){
+            checkEpicStatusForProgress(epic);
+            checkEpicStatusForDone(epic);
+        }
+    }
+
+    public Subtask getSubtaskById(int id) {
+        return subtasks.get(id);
     }
 }
