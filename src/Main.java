@@ -68,8 +68,8 @@ public class Main {
         taskManager.deleteTask(currentTask);
         System.out.println(taskManager.getTasks());
 // удалить один из эпиков
-        System.out.println("Удалим эпик номер 6");
-        Epic currentEpic = taskManager.getEpics().get(6);
+        System.out.println("Удалим эпик номер 3");
+        Epic currentEpic = taskManager.getEpics().get(3);
         taskManager.deleteEpic(currentEpic);
         System.out.println(taskManager.getEpics());
     }

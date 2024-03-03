@@ -2,6 +2,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class TaskManager {
+    private final HashMap<Integer, Task> tasks = new HashMap<>();
+    private final HashMap<Integer, Subtask> subtasks = new HashMap<>();
+    private final HashMap<Integer, Epic> epics = new HashMap<>();
+    private int idSequence = 0;
 
     public HashMap<Integer, Task> getTasks() {
         return tasks;
@@ -15,10 +19,7 @@ public class TaskManager {
         return epics;
     }
 
-    private final HashMap<Integer, Task> tasks = new HashMap<>();
-    private final HashMap<Integer, Subtask> subtasks = new HashMap<>();
-    private final HashMap<Integer, Epic> epics = new HashMap<>();
-    private int idSequence = 0;
+
 
 /////////////////////////////////////////// Manager Methods/////////////////////////////////////////////////////////
     private int generateNewID() {
@@ -66,8 +67,13 @@ public class TaskManager {
         System.out.println("Создали эпик с номером " + newEpic.getId() + " и названием '" + newEpic.getTitle() +"'");
     }
     public void deleteEpic(Epic newEpic) {
+        ArrayList<Subtask> currentSubtasks = newEpic.getArraySubTask();
+        int count = currentSubtasks.size();
+        for (Subtask subtask : currentSubtasks) {
+            subtasks.remove(subtask.getId());
+        }
         epics.remove(newEpic.getId());
-        System.out.println("Удалили эпик с номером " + newEpic.getId());
+        System.out.println("Удалили эпик с номером " + newEpic.getId() + " и все его субтаски в количестве " + count + " штук.");
     }
     public void updateEpic(Epic epic, String title, String description) {
         if (title != null) {
