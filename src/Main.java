@@ -1,7 +1,11 @@
 public class Main {
 
     public static void main(String[] args){
-        TaskManager taskManager = new TaskManager();
+        InMemoryTaskManager taskManager= Managers.getDefault();
+        //HistoryManager historyManager = Managers.getDefaultHistory(); - если делать такую реализацию
+        //то не срабатывает getHistory - возвращается не тот список, что мы заполняем в процессе, а из нового,
+        // только что сгенерированного класса, и он, очевидно,пустой
+        HistoryManager historyManager = taskManager.getHistoryManager();
 
 // Создайте две задачи
         System.out.println("Cоздаём одну задачу");
@@ -62,6 +66,9 @@ public class Main {
         taskManager.updateSubTask(currentSubTask4, TaskStatus.DONE, null, "Тут описание субтаски 8");
         checkerEpic = taskManager.getEpics().get(6);
         System.out.println(checkerEpic);
+// посмотрим на всё что есть
+        System.out.println("Посмотрим на все наши таски, субтаски и эпики");
+        InMemoryTaskManager.printAllTasks(taskManager,historyManager);
 // удалить одну из задач
         System.out.println("Удалим таску 1");
         currentTask = taskManager.getTasks().get(1);
