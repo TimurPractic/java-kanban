@@ -39,16 +39,16 @@ public class Main {
         System.out.println(taskManager.getSubtasks());
 // Измените статусы созданных тасков, распечатайте их.
         System.out.println("Поменяем статус таске 1");
-        Task currentTask = taskManager.getTasks().get(1);
+        Task currentTask = taskManager.getTaskById(1);
         taskManager.updateTask(currentTask, TaskStatus.IN_PROGRESS, null, "Описание");
         System.out.println(currentTask);
 // Измените статусы созданных субтасков, распечатайте их.
         System.out.println("Поменяем статус подзадаче 4"); //эпик 3
-        Subtask currentSubTask1 = taskManager.getSubtasks().get(4);
+        Subtask currentSubTask1 = taskManager.getSubtaskById(4);
         Epic currentEpic1 = taskManager.getEpics().get(3);
         taskManager.updateSubTask(currentSubTask1, TaskStatus.IN_PROGRESS, null, "Тут описание субтаски 6");
         System.out.println("Поменяем статус подзадаче 7"); // эпик 6
-        Subtask currentSubTask2 = taskManager.getSubtasks().get(7);
+        Subtask currentSubTask2 = taskManager.getSubtaskById(7);
         Epic currentEpic2 = taskManager.getEpics().get(6);
         taskManager.updateSubTask(currentSubTask2, TaskStatus.IN_PROGRESS, null, "Тут описание субтаски 12");
         System.out.println(currentEpic1);
@@ -57,13 +57,13 @@ public class Main {
         System.out.println(currentSubTask2);
 //завершим эпик перведя позадачи в Done - эпик 3, задачи 4 и 5, эпик 6, задача 7
         System.out.println("Поменяем статус подзадаче 4"); //эпик 3
-        Subtask currentSubTask3 = taskManager.getSubtasks().get(4);
-        taskManager.updateSubTask(currentSubTask3, TaskStatus.DONE, null, "Тут описание субтаски 6");
+        Subtask currentSubTask3 = taskManager.getSubtaskById(4);
+        taskManager.updateSubTask(currentSubTask3, TaskStatus.DONE, null, "Тут описание субтаски 3");
         Epic checkerEpic = taskManager.getEpics().get(3);
         System.out.println(checkerEpic);
         System.out.println("Поменяем статус подзадаче 7"); //эпик 6
-        Subtask currentSubTask4 = taskManager.getSubtasks().get(7);
-        taskManager.updateSubTask(currentSubTask4, TaskStatus.DONE, null, "Тут описание субтаски 8");
+        Subtask currentSubTask4 = taskManager.getSubtaskById(7);
+        taskManager.updateSubTask(currentSubTask4, TaskStatus.DONE, null, "Тут описание субтаски 7");
         checkerEpic = taskManager.getEpics().get(6);
         System.out.println(checkerEpic);
 // посмотрим на всё что есть

@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.List;
 import java.util.HashMap;
 
 public class InMemoryTaskManager implements TaskManagerInterface {
@@ -191,7 +190,7 @@ public class InMemoryTaskManager implements TaskManagerInterface {
         newSubTask.setStatus(TaskStatus.NEW);
         subtasks.put(newSubTask.getId(), newSubTask);
         Epic assignedEpic = getEpicById(newSubTask.getEpicId());
-        ArrayList chosenArray = assignedEpic.getArraySubTask();
+        ArrayList<Subtask> chosenArray = assignedEpic.getArraySubTask();
         chosenArray.add(newSubTask);
         assignedEpic.setArraySubTask(chosenArray);
 
@@ -217,14 +216,13 @@ public class InMemoryTaskManager implements TaskManagerInterface {
 
     @Override
     public void deleteOneSubTask(int id) {
-        Subtask newSubTask = getSubtaskById(id);
+        Subtask newSubTask = subtasks.get(id);
         //удалиться из эпика
         Epic currEpic = getEpicById(newSubTask.getEpicId());
-        subtasks.remove(newSubTask);
+        subtasks.remove(id);
         //пересчитать статус эпика
         checkEpicStatusForProgress(currEpic);
         checkEpicStatusForDone(currEpic);
-
         System.out.println("Удалили субтаску с номером " + id);
     }
 
