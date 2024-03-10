@@ -1,6 +1,7 @@
 import org.junit.jupiter.api.Test;
 
-import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -11,7 +12,7 @@ class EpicTest {
         InMemoryTaskManager taskManager = Managers.getDefault();
         Epic epic = new Epic("Test addNewEpic");
         taskManager.addEpic(epic);
-        final HashMap<Integer, Epic> epicers = taskManager.getEpics();
-        assertEquals(epicers.get(1), epicers.get(1), "Задачи не совпадают.");
+        final List<Epic> epicers = taskManager.getEpics();
+        assertEquals(epicers.get(0), epicers.get(0), "Задачи не совпадают.");
     }
 }

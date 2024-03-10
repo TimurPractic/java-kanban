@@ -45,11 +45,11 @@ public class Main {
 // Измените статусы созданных субтасков, распечатайте их.
         System.out.println("Поменяем статус подзадаче 4"); //эпик 3
         Subtask currentSubTask1 = taskManager.getSubtaskById(4);
-        Epic currentEpic1 = taskManager.getEpics().get(3);
+        Epic currentEpic1 = taskManager.getEpics().get(0);
         taskManager.updateSubTask(currentSubTask1, TaskStatus.IN_PROGRESS, null, "Тут описание субтаски 6");
         System.out.println("Поменяем статус подзадаче 7"); // эпик 6
         Subtask currentSubTask2 = taskManager.getSubtaskById(7);
-        Epic currentEpic2 = taskManager.getEpics().get(6);
+        Epic currentEpic2 = taskManager.getEpics().get(1);
         taskManager.updateSubTask(currentSubTask2, TaskStatus.IN_PROGRESS, null, "Тут описание субтаски 12");
         System.out.println(currentEpic1);
         System.out.println(currentSubTask1);
@@ -59,16 +59,13 @@ public class Main {
         System.out.println("Поменяем статус подзадаче 4"); //эпик 3
         Subtask currentSubTask3 = taskManager.getSubtaskById(4);
         taskManager.updateSubTask(currentSubTask3, TaskStatus.DONE, null, "Тут описание субтаски 3");
-        Epic checkerEpic = taskManager.getEpics().get(3);
+        Epic checkerEpic = taskManager.getEpics().get(0);
         System.out.println(checkerEpic);
         System.out.println("Поменяем статус подзадаче 7"); //эпик 6
         Subtask currentSubTask4 = taskManager.getSubtaskById(7);
         taskManager.updateSubTask(currentSubTask4, TaskStatus.DONE, null, "Тут описание субтаски 7");
-        checkerEpic = taskManager.getEpics().get(6);
+        checkerEpic = taskManager.getEpics().get(1);
         System.out.println(checkerEpic);
-// посмотрим на всё что есть
-        System.out.println("Посмотрим на все наши таски, субтаски и эпики");
-        InMemoryTaskManager.printAllTasks(taskManager,historyManager);
 // удалить одну из задач
         System.out.println("Удалим таску 1");
         currentTask = taskManager.getTasks().get(1);
@@ -76,7 +73,7 @@ public class Main {
         System.out.println(taskManager.getTasks());
 // удалить один из эпиков
         System.out.println("Удалим эпик номер 3");
-        Epic currentEpic = taskManager.getEpics().get(3);
+        Epic currentEpic = taskManager.getEpics().get(0);
         taskManager.deleteEpic(currentEpic);
         System.out.println(taskManager.getEpics());
     }

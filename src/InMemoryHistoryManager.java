@@ -1,28 +1,24 @@
 import java.util.List;
 import java.util.ArrayList;
 
-public class InMemoryHistoryManager implements HistoryManager{
-    private final List<Task> historyList = new ArrayList<>();
+public class InMemoryHistoryManager implements HistoryManager {
+    private final List<Task> history = new ArrayList<>();
 
     @Override
-    public void addy(Task task) {
-       // Task copyTask = task;
-        if (historyList.size() < 10) {
-            historyList.add(task);
-        } else {
-            while (historyList.size() >= 10) {
-                historyList.remove(0);
-            }
-            historyList.add(task);
+    public void add(Task task) {
+        if (history.size() >= 10) {
+            history.remove(0);
         }
+        history.add(task);
     }
 
     @Override
-    public List<Task> getHistory(){
-            return historyList;
+    public List<Task> getHistory() {
+            return history;
         }
+
     @Override
-    public void clearHistory(){
-        historyList.clear();
+    public void clearHistory() {
+        history.clear();
     }
 }

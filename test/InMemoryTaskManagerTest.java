@@ -46,7 +46,7 @@ class InMemoryTaskManagerTest {
         Task task2 = new Task("Test addNewTask");
         taskManager.addTask(task2);
         taskManager.deleteAllTasks();
-        HashMap<Integer, Task> emptyArray = new HashMap<>();
+        List<Subtask> emptyArray = new ArrayList<>();
         assertEquals(taskManager.getTasks(),emptyArray,"Тут не пусто!");
     }
 
@@ -87,7 +87,7 @@ class InMemoryTaskManagerTest {
         Epic epic2 = new Epic("Test addNewTask");
         taskManager.addTask(epic2);
         taskManager.deleteAllEpics();
-        HashMap<Integer, Epic> emptyArray = new HashMap<>();
+        List<Subtask> emptyArray = new ArrayList<>();
         assertEquals(taskManager.getEpics(),emptyArray,"Тут не пусто!");
     }
 
@@ -137,7 +137,7 @@ class InMemoryTaskManagerTest {
         Subtask subtask2 = new Subtask("Это 2 подзадача", epic.getId());
         taskManager.addSubTask(subtask2);
         taskManager.deleteAllSubTasks();
-        HashMap<Integer, Epic> emptyArray = new HashMap<>();
+        List<Subtask> emptyArray = new ArrayList<>();
         assertEquals(taskManager.getSubtasks(),emptyArray,"Тут не пусто!");
     }
 }
