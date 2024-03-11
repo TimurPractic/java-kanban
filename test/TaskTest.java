@@ -1,7 +1,9 @@
+import ru.yandex.practicum.TaskTracker.TasksManager.InMemoryTaskManager;
+import ru.yandex.practicum.TaskTracker.TasksManager.Task;
 import org.junit.jupiter.api.Test;
+import ru.yandex.practicum.TaskTracker.utils.Managers;
 
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 

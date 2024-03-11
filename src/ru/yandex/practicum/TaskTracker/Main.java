@@ -1,11 +1,15 @@
+package ru.yandex.practicum.TaskTracker;
+
+import ru.yandex.practicum.TaskTracker.HistoryManager.HistoryManager;
+import ru.yandex.practicum.TaskTracker.TasksManager.InMemoryTaskManager;
+import ru.yandex.practicum.TaskTracker.utils.Managers;
+import ru.yandex.practicum.TaskTracker.TasksManager.*;
+
 public class Main {
 
     public static void main(String[] args){
         InMemoryTaskManager taskManager= Managers.getDefault();
-        //HistoryManager historyManager = Managers.getDefaultHistory(); - если делать такую реализацию
-        //то не срабатывает getHistory - возвращается не тот список, что мы заполняем в процессе, а из нового,
-        // только что сгенерированного класса, и он, очевидно,пустой
-        HistoryManager historyManager = taskManager.getHistoryManager();
+        HistoryManager historyManager = Managers.getDefaultHistory();
 
 // Создайте две задачи
         System.out.println("Cоздаём одну задачу");
@@ -40,32 +44,8 @@ public class Main {
 // Измените статусы созданных тасков, распечатайте их.
         System.out.println("Поменяем статус таске 1");
         Task currentTask = taskManager.getTaskById(1);
-        taskManager.updateTask(currentTask, TaskStatus.IN_PROGRESS, null, "Описание");
+        taskManager.updateTask(currentTask);
         System.out.println(currentTask);
-// Измените статусы созданных субтасков, распечатайте их.
-        System.out.println("Поменяем статус подзадаче 4"); //эпик 3
-        Subtask currentSubTask1 = taskManager.getSubtaskById(4);
-        Epic currentEpic1 = taskManager.getEpics().get(0);
-        taskManager.updateSubTask(currentSubTask1, TaskStatus.IN_PROGRESS, null, "Тут описание субтаски 6");
-        System.out.println("Поменяем статус подзадаче 7"); // эпик 6
-        Subtask currentSubTask2 = taskManager.getSubtaskById(7);
-        Epic currentEpic2 = taskManager.getEpics().get(1);
-        taskManager.updateSubTask(currentSubTask2, TaskStatus.IN_PROGRESS, null, "Тут описание субтаски 12");
-        System.out.println(currentEpic1);
-        System.out.println(currentSubTask1);
-        System.out.println(currentEpic2);
-        System.out.println(currentSubTask2);
-//завершим эпик перведя позадачи в Done - эпик 3, задачи 4 и 5, эпик 6, задача 7
-        System.out.println("Поменяем статус подзадаче 4"); //эпик 3
-        Subtask currentSubTask3 = taskManager.getSubtaskById(4);
-        taskManager.updateSubTask(currentSubTask3, TaskStatus.DONE, null, "Тут описание субтаски 3");
-        Epic checkerEpic = taskManager.getEpics().get(0);
-        System.out.println(checkerEpic);
-        System.out.println("Поменяем статус подзадаче 7"); //эпик 6
-        Subtask currentSubTask4 = taskManager.getSubtaskById(7);
-        taskManager.updateSubTask(currentSubTask4, TaskStatus.DONE, null, "Тут описание субтаски 7");
-        checkerEpic = taskManager.getEpics().get(1);
-        System.out.println(checkerEpic);
 // удалить одну из задач
         System.out.println("Удалим таску 1");
         currentTask = taskManager.getTasks().get(1);

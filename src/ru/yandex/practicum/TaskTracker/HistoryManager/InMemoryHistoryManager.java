@@ -1,5 +1,8 @@
+package ru.yandex.practicum.TaskTracker.HistoryManager;
+
 import java.util.List;
 import java.util.ArrayList;
+import ru.yandex.practicum.TaskTracker.TasksManager.Task;
 
 public class InMemoryHistoryManager implements HistoryManager {
     private final List<Task> history = new ArrayList<>();
@@ -14,11 +17,6 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public List<Task> getHistory() {
-            return history;
-        }
-
-    @Override
-    public void clearHistory() {
-        history.clear();
+        return history;
     }
 }

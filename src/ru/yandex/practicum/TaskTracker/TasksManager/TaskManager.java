@@ -1,5 +1,6 @@
+package ru.yandex.practicum.TaskTracker.TasksManager;
+
 import java.util.List;
-import java.util.Map;
 
 public interface TaskManager {
     List<Task> getTasks();
@@ -7,16 +8,16 @@ public interface TaskManager {
     List<Epic> getEpics();
     void addTask(Task newTask);
     void deleteTask(Task newTask);
-    void updateTask(Task task, TaskStatus status, String title, String description);
+    void updateTask(Task task);
     void deleteAllTasks();
     Task getTaskById(int id);
     void addEpic(Epic newEpic);
     void deleteEpic(Epic newEpic);
-    void updateEpic(Epic epic, String title, String description);
+    void updateEpic(Epic epic);
     void deleteAllEpics();
     Epic getEpicById(Integer id);
     void addSubTask(Subtask newSubTask);
-    void updateSubTask(Subtask subtask, TaskStatus status, String title, String description);
+    void updateSubTask(Subtask subtask);
     void deleteOneSubTask(int id);
     void deleteAllSubTasks();
     Subtask getSubtaskById(int id);

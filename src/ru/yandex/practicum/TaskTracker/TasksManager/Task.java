@@ -1,3 +1,5 @@
+package ru.yandex.practicum.TaskTracker.TasksManager;
+
 public class Task {
     private TaskStatus status;
     private int id;
@@ -10,7 +12,7 @@ public class Task {
 
     @Override
     public String toString() {
-        return "Task{" +
+        return "TasksManager.Task{" +
                 "status=" + status +
                 ", id=" + id +
                 ", title='" + title + '\'' +
