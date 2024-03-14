@@ -1,8 +1,8 @@
-package ru.yandex.practicum.TaskTracker.HistoryManager;
+package ru.yandex.practicum.tasktracker.manager;
 
 import java.util.List;
 import java.util.ArrayList;
-import ru.yandex.practicum.TaskTracker.TasksManager.Task;
+import ru.yandex.practicum.tasktracker.model.Task;
 
 public class InMemoryHistoryManager implements HistoryManager {
     private final List<Task> history = new ArrayList<>();

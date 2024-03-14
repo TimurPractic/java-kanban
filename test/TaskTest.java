@@ -1,7 +1,7 @@
-import ru.yandex.practicum.TaskTracker.TasksManager.InMemoryTaskManager;
-import ru.yandex.practicum.TaskTracker.TasksManager.Task;
+import ru.yandex.practicum.tasktracker.manager.InMemoryTaskManager;
+import ru.yandex.practicum.tasktracker.model.Task;
 import org.junit.jupiter.api.Test;
-import ru.yandex.practicum.TaskTracker.utils.Managers;
+import ru.yandex.practicum.tasktracker.utils.Managers;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ class TaskTest {
     @Test
     void addNewTaskTest() {
         InMemoryTaskManager taskManager = Managers.getDefault();
-        Task task = new Task("Test addNewTask");
+        Task task = new Task();
         taskManager.addTask(task);
         final Task savedTask = taskManager.getTaskById(task.getId());
         final List<Task> taskers = taskManager.getTasks();
@@ -26,7 +26,7 @@ class TaskTest {
     @Test
     void equalTasksAreEqualIfIDEqualTest(){
         InMemoryTaskManager taskManager = Managers.getDefault();
-        Task task = new Task("Test addNewTask");
+        Task task = new Task();
         taskManager.addTask(task);
         final List<Task> taskers = taskManager.getTasks();
         assertEquals(taskers.get(0), taskers.get(0), "Задачи не совпадают.");

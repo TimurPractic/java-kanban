@@ -1,37 +1,50 @@
-package ru.yandex.practicum.TaskTracker;
+package ru.yandex.practicum.tasktracker;
 
-import ru.yandex.practicum.TaskTracker.HistoryManager.HistoryManager;
-import ru.yandex.practicum.TaskTracker.TasksManager.InMemoryTaskManager;
-import ru.yandex.practicum.TaskTracker.utils.Managers;
-import ru.yandex.practicum.TaskTracker.TasksManager.*;
+import ru.yandex.practicum.tasktracker.manager.InMemoryTaskManager;
+import ru.yandex.practicum.tasktracker.model.Epic;
+import ru.yandex.practicum.tasktracker.model.Subtask;
+import ru.yandex.practicum.tasktracker.model.Task;
+import ru.yandex.practicum.tasktracker.utils.Managers;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Main {
 
     public static void main(String[] args){
         InMemoryTaskManager taskManager= Managers.getDefault();
-        HistoryManager historyManager = Managers.getDefaultHistory();
 
 // Создайте две задачи
         System.out.println("Cоздаём одну задачу");
-        Task task = new Task("Пройти теорию 4 спринта"); //как правильно
+        Task task = new Task(); //как правильно
         taskManager.addTask(task);
-        Task task2 = new Task("Сдать практику 4 спринта");
+        Task task2 = new Task();
         System.out.println("Cоздаём вторую задачу");
         taskManager.addTask(task2);
 // создать эпик с двумя подзадачами
         System.out.println("Cоздаём эпик с двумя подзадачами");
-        Epic epic = new Epic("Это эпик с 2 подзадачами");
+        Epic epic = new Epic();
         taskManager.addEpic(epic);
-        Subtask subtask1 = new Subtask("Это первая подзадача", epic.getId());
+        Subtask subtask1 = new Subtask();
         taskManager.addSubTask(subtask1);
-        Subtask subtask2 = new Subtask("Это вторая подзадача", epic.getId());
+        Subtask subtask2 = new Subtask();
         taskManager.addSubTask(subtask2);
+        subtask1.setEpicId(epic.getId());
+        subtask2.setEpicId(epic.getId());
+        List<Integer> epicSubtasksIds = new ArrayList<>();
+        epicSubtasksIds.add(subtask1.getId());
+        epicSubtasksIds.add(subtask2.getId());
+        epic.setSubtasks(epicSubtasksIds);
 // создать эпик с одной подзадачей.
         System.out.println("Cоздаём эпик с одной подзадачей");
-        Epic epic1 = new Epic("Это эпик с одной подзадачей");
+        Epic epic1 = new Epic();
         taskManager.addEpic(epic1);
-        Subtask subtask3 = new Subtask("Это единственная подзадача", epic1.getId());
+        Subtask subtask3 = new Subtask();
         taskManager.addSubTask(subtask3);
+        subtask3.setEpicId(epic1.getId());
+        List<Integer> epicSubtasksIds2 = new ArrayList<>();
+        epicSubtasksIds.add(subtask3.getId());
+        epic.setSubtasks(epicSubtasksIds2);
 // Распечатайте списки задач
         System.out.println("Распечатаем списки задач");
         System.out.println(taskManager.getTasks());

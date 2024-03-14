@@ -1,7 +1,7 @@
-import ru.yandex.practicum.TaskTracker.TasksManager.Epic;
-import ru.yandex.practicum.TaskTracker.TasksManager.InMemoryTaskManager;
+import ru.yandex.practicum.tasktracker.model.Epic;
+import ru.yandex.practicum.tasktracker.manager.InMemoryTaskManager;
 import org.junit.jupiter.api.Test;
-import ru.yandex.practicum.TaskTracker.utils.Managers;
+import ru.yandex.practicum.tasktracker.utils.Managers;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ class EpicTest {
     @Test
     void equalEpicsAreEqualIfIDEqualTest(){
         InMemoryTaskManager taskManager = Managers.getDefault();
-        Epic epic = new Epic("Test addNewEpic");
+        Epic epic = new Epic();
         taskManager.addEpic(epic);
         final List<Epic> epicers = taskManager.getEpics();
         assertEquals(epicers.get(0), epicers.get(0), "Задачи не совпадают.");

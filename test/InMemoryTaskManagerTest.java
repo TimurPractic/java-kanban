@@ -1,9 +1,9 @@
-import ru.yandex.practicum.TaskTracker.TasksManager.Epic;
-import ru.yandex.practicum.TaskTracker.TasksManager.InMemoryTaskManager;
-import ru.yandex.practicum.TaskTracker.TasksManager.Subtask;
-import ru.yandex.practicum.TaskTracker.TasksManager.Task;
+import ru.yandex.practicum.tasktracker.model.Epic;
+import ru.yandex.practicum.tasktracker.manager.InMemoryTaskManager;
+import ru.yandex.practicum.tasktracker.model.Subtask;
+import ru.yandex.practicum.tasktracker.model.Task;
 import org.junit.jupiter.api.Test;
-import ru.yandex.practicum.TaskTracker.utils.Managers;
+import ru.yandex.practicum.tasktracker.utils.Managers;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -16,7 +16,7 @@ class InMemoryTaskManagerTest {
     @Test
     void addTask() {
         InMemoryTaskManager taskManager = Managers.getDefault();
-        Task task = new Task("Test addNewTask");
+        Task task = new Task();
         taskManager.addTask(task);
         assertNotNull(task, "Задача не найдена.");
         assertEquals(taskManager.getTaskById(1),taskManager.getTaskById(1),"Задачи не одинаковые.");
@@ -25,7 +25,7 @@ class InMemoryTaskManagerTest {
     @Test
     void deleteTask() {
         InMemoryTaskManager taskManager = Managers.getDefault();
-        Task task = new Task("Test addNewTask");
+        Task task = new Task();
         taskManager.addTask(task);
         taskManager.deleteTask(task);
         assertNull(taskManager.getTaskById(1));
@@ -34,9 +34,9 @@ class InMemoryTaskManagerTest {
     @Test
     void deleteAllTasks() {
         InMemoryTaskManager taskManager = Managers.getDefault();
-        Task task = new Task("Test addNewTask");
+        Task task = new Task();
         taskManager.addTask(task);
-        Task task2 = new Task("Test addNewTask");
+        Task task2 = new Task();
         taskManager.addTask(task2);
         taskManager.deleteAllTasks();
         List<Subtask> emptyArray = new ArrayList<>();
@@ -46,7 +46,7 @@ class InMemoryTaskManagerTest {
     @Test
     void addEpic() {
         InMemoryTaskManager taskManager = Managers.getDefault();
-        Epic epic = new Epic("Test addNewTask");
+        Epic epic = new Epic();
         taskManager.addEpic(epic);
         assertNotNull(epic, "Задача не найдена.");
         assertEquals(taskManager.getEpicById(1),taskManager.getEpicById(1),"Задачи не одинаковые.");
@@ -55,7 +55,7 @@ class InMemoryTaskManagerTest {
     @Test
     void deleteEpic() {
         InMemoryTaskManager taskManager = Managers.getDefault();
-        Epic epic = new Epic("Test addNewTask");
+        Epic epic = new Epic();
         taskManager.addEpic(epic);
         taskManager.deleteEpic(epic);
         assertNull(taskManager.getEpicById(1));
@@ -64,21 +64,21 @@ class InMemoryTaskManagerTest {
     @Test
     void deleteAllEpics() {
         InMemoryTaskManager taskManager = Managers.getDefault();
-        Epic epic = new Epic("Test addNewTask");
+        Epic epic = new Epic();
         taskManager.addEpic(epic);
-        Epic epic2 = new Epic("Test addNewTask");
+        Epic epic2 = new Epic();
         taskManager.addTask(epic2);
         taskManager.deleteAllEpics();
-        List<Subtask> emptyArray = new ArrayList<>();
+        List<Epic> emptyArray = new ArrayList<>();
         assertEquals(taskManager.getEpics(),emptyArray,"Тут не пусто!");
     }
 
     @Test
     void addSubTask() {
         InMemoryTaskManager taskManager = Managers.getDefault();
-        Epic epic = new Epic("Test addNewTask");
+        Epic epic = new Epic();
         taskManager.addEpic(epic);
-        Subtask subtask1 = new Subtask("Это 1 подзадача", epic.getId());
+        Subtask subtask1 = new Subtask();
         taskManager.addSubTask(subtask1);
         assertNotNull(taskManager.getSubtasks());
         assertEquals(taskManager.getSubtasks().size(), 1);
@@ -87,12 +87,18 @@ class InMemoryTaskManagerTest {
     @Test
     void deleteAllSubTasks() {
         InMemoryTaskManager taskManager = Managers.getDefault();
-        Epic epic = new Epic("Test addNewTask");
+        Epic epic = new Epic();
         taskManager.addEpic(epic);
-        Subtask subtask1 = new Subtask("Это 1 подзадача", epic.getId());
+        Subtask subtask1 = new Subtask();
         taskManager.addSubTask(subtask1);
-        Subtask subtask2 = new Subtask("Это 2 подзадача", epic.getId());
+        Subtask subtask2 = new Subtask();
         taskManager.addSubTask(subtask2);
+        subtask1.setEpicId(epic.getId());
+        subtask2.setEpicId(epic.getId());
+        List<Integer> epicSubtasksIds = new ArrayList<>();
+        epicSubtasksIds.add(subtask1.getId());
+        epicSubtasksIds.add(subtask2.getId());
+        epic.setSubtasks(epicSubtasksIds);
         taskManager.deleteAllSubTasks();
         List<Subtask> emptyArray = new ArrayList<>();
         assertEquals(taskManager.getSubtasks(),emptyArray,"Тут не пусто!");

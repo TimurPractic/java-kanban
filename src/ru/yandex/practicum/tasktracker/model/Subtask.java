@@ -1,12 +1,7 @@
-package ru.yandex.practicum.TaskTracker.TasksManager;
+package ru.yandex.practicum.tasktracker.model;
 
 public class Subtask extends Task {
     private int epicId;
-
-   public Subtask(String title, int id) {
-        super(title);
-        this.epicId = id;
-    }
 
     public int getEpicId() {
         return epicId;
@@ -16,3 +11,4 @@ public class Subtask extends Task {
         this.epicId = epicId;
     }
 }
+

@@ -1,14 +1,12 @@
-package ru.yandex.practicum.TaskTracker.TasksManager;
+package ru.yandex.practicum.tasktracker.model;
+
+import ru.yandex.practicum.tasktracker.tasksmanager.TaskStatus;
 
 public class Task {
     private TaskStatus status;
     private int id;
     private String title;
     private String description;
-
-    public Task(String title) {
-        this.title = title ;
-    }
 
     @Override
     public String toString() {
