@@ -34,7 +34,7 @@ public class Main {
         List<Integer> epicSubtasksIds = new ArrayList<>();
         epicSubtasksIds.add(subtask1.getId());
         epicSubtasksIds.add(subtask2.getId());
-        epic.setSubtasks(epicSubtasksIds);
+        epic.setSubtasksIds(epicSubtasksIds);
 // создать эпик с одной подзадачей.
         System.out.println("Cоздаём эпик с одной подзадачей");
         Epic epic1 = new Epic();
@@ -44,7 +44,7 @@ public class Main {
         subtask3.setEpicId(epic1.getId());
         List<Integer> epicSubtasksIds2 = new ArrayList<>();
         epicSubtasksIds.add(subtask3.getId());
-        epic.setSubtasks(epicSubtasksIds2);
+        epic.setSubtasksIds(epicSubtasksIds2);
 // Распечатайте списки задач
         System.out.println("Распечатаем списки задач");
         System.out.println(taskManager.getTasks());
@@ -62,7 +62,7 @@ public class Main {
 // удалить одну из задач
         System.out.println("Удалим таску 1");
         currentTask = taskManager.getTasks().get(1);
-        taskManager.deleteTask(currentTask);
+        taskManager.deleteTask(currentTask.getId());
         System.out.println(taskManager.getTasks());
 // удалить один из эпиков
         System.out.println("Удалим эпик номер 3");

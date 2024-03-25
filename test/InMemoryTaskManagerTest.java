@@ -27,7 +27,7 @@ class InMemoryTaskManagerTest {
         InMemoryTaskManager taskManager = Managers.getDefault();
         Task task = new Task();
         taskManager.addTask(task);
-        taskManager.deleteTask(task);
+        taskManager.deleteTask(task.getId());
         assertNull(taskManager.getTaskById(1));
     }
 
@@ -98,7 +98,7 @@ class InMemoryTaskManagerTest {
         List<Integer> epicSubtasksIds = new ArrayList<>();
         epicSubtasksIds.add(subtask1.getId());
         epicSubtasksIds.add(subtask2.getId());
-        epic.setSubtasks(epicSubtasksIds);
+        epic.setSubtasksIds(epicSubtasksIds);
         taskManager.deleteAllSubTasks();
         List<Subtask> emptyArray = new ArrayList<>();
         assertEquals(taskManager.getSubtasks(),emptyArray,"Тут не пусто!");

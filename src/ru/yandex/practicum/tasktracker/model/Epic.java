@@ -3,13 +3,13 @@ package ru.yandex.practicum.tasktracker.model;
 import java.util.List;
 
 public class Epic extends Task {
-    private List<Integer> subtasks;
+    private List<Integer> subtasksIds;
 
-    public List<Integer> getSubtasks() {
-        return subtasks;
+    public List<Integer> getSubtasksIds() {
+        return subtasksIds;
     }
 
-    public void setSubtasks(List<Integer> subtasks) {
-        this.subtasks = subtasks;
+    public void setSubtasksIds(List<Integer> subtasksIds) {
+        this.subtasksIds = subtasksIds;
     }
 }

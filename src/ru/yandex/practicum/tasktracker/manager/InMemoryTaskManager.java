@@ -3,7 +3,7 @@ package ru.yandex.practicum.tasktracker.manager;
 import ru.yandex.practicum.tasktracker.model.Epic;
 import ru.yandex.practicum.tasktracker.model.Subtask;
 import ru.yandex.practicum.tasktracker.model.Task;
-import ru.yandex.practicum.tasktracker.tasksmanager.TaskStatus;
+import ru.yandex.practicum.tasktracker.model.TaskStatus;
 import ru.yandex.practicum.tasktracker.utils.Managers;
 
 import java.util.ArrayList;
@@ -42,8 +42,8 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void deleteTask(Task newTask) {
-        tasks.remove(newTask.getId());
+    public void deleteTask(int taskId) {
+        tasks.remove(taskId);
     }
 
     @Override
@@ -73,7 +73,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void deleteEpic(Epic newEpic) {
-        subtasks.remove(newEpic.getSubtasks());
+        subtasks.remove(newEpic.getSubtasksIds());
         epics.remove(newEpic.getId());
     }
 
@@ -91,8 +91,8 @@ public class InMemoryTaskManager implements TaskManager {
     private void checkEpicStatus(Epic epic) {
         boolean isReady = true;
         boolean isInProgress = false;
-        if(!epic.getSubtasks().isEmpty()) {
-            for (int subId : epic.getSubtasks()) {
+        if (!epic.getSubtasksIds().isEmpty()) {
+            for (int subId : epic.getSubtasksIds()) {
                 if (subtasks.get(subId).getStatus().equals(TaskStatus.IN_PROGRESS)) {
                     isInProgress = true;
                     break;
@@ -126,7 +126,7 @@ public class InMemoryTaskManager implements TaskManager {
         List <Task> epicSubtasks = new ArrayList<>();
         if (epics.containsKey(epicId)) {
             Epic epic = epics.get(epicId);
-            for (Integer subId : epic.getSubtasks()) {
+            for (Integer subId : epic.getSubtasksIds()) {
                 epicSubtasks.add(subtasks.get(subId));
             }
         }
@@ -139,6 +139,7 @@ public class InMemoryTaskManager implements TaskManager {
         newSubTask.setId(newId);
         newSubTask.setStatus(TaskStatus.NEW);
         subtasks.put(newSubTask.getId(), newSubTask);
+        checkEpicStatus(getEpicById(newSubTask.getEpicId()));
     }
 
     @Override
@@ -160,11 +161,11 @@ public class InMemoryTaskManager implements TaskManager {
         List<Epic> epicsToDelete = new ArrayList<>();
         for (Subtask subtask : subtasks.values()){
             epicsToDelete.add(getEpicById(subtask.getEpicId()));
-            getEpicById(subtask.getEpicId()).setSubtasks(new ArrayList<>());
+            getEpicById(subtask.getEpicId()).setSubtasksIds(new ArrayList<>());
         }
         subtasks.clear();
         for (Epic epic : epicsToDelete){
-            checkEpicStatus(epic);
+            epic.setStatus(TaskStatus.NEW);
         }
     }
 

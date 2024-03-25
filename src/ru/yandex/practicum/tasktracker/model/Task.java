@@ -1,7 +1,5 @@
 package ru.yandex.practicum.tasktracker.model;
 
-import ru.yandex.practicum.tasktracker.tasksmanager.TaskStatus;
-
 public class Task {
     private TaskStatus status;
     private int id;
