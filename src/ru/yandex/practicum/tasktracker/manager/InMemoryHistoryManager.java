@@ -8,7 +8,6 @@ import ru.yandex.practicum.tasktracker.model.Node;
 public class InMemoryHistoryManager implements HistoryManager {
     public Node firstNode;
     public Node lastNode;
-    private final List<Task> history = new ArrayList<>();
     private final Map<Integer, Node> historyMap = new HashMap<>();
 
     @Override
@@ -20,7 +19,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public List<Task> getHistory() {
-        return history;
+        return getTasks();
     }
 
     @Override
@@ -53,12 +52,12 @@ public class InMemoryHistoryManager implements HistoryManager {
         historyMap.put(task.getId(), node);
     }
 
-    private ArrayList<Task> getTasks() {
+    public ArrayList<Task> getTasks() {
         ArrayList<Task> tasks = new ArrayList<>(historyMap.size());
-        Node current = firstNode;
-        while (current != null) {
-            tasks.add(current.getTask());
-            current = current.getNextNode();
+        Node currentNode = firstNode;
+        while (currentNode != null) {
+            tasks.add(currentNode.getTask());
+            currentNode = currentNode.getNextNode();
         }
         return tasks;
     }
