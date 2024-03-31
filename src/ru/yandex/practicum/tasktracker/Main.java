@@ -19,7 +19,7 @@ public class Main {
         System.out.println("Cоздаём вторую задачу");
         Task task2 = new Task();
         taskManager.addTask(task2);
-// создать эпик с двумя подзадачами
+// создать эпик с тремя подзадачами
         System.out.println("Cоздаём эпик с тремя подзадачами");
         Epic epic = new Epic();
         taskManager.addEpic(epic);
