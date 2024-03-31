@@ -9,15 +9,13 @@ public class InMemoryHistoryManager implements HistoryManager {
     public Node firstNode;
     public Node lastNode;
     private final List<Task> history = new ArrayList<>();
-    private final Map<Integer, Node> historyMap = new HashMap<>(); //id задачи и узлы списка LinkedHashMapWithNodes
+    private final Map<Integer, Node> historyMap = new HashMap<>();
 
     @Override
     public void add(Task task) {
-      //  Node node = new Node(task, );
-        // getNode по таку и положить сюда
-        // getNode написать в классе Node
-        removeNode(task); //удалить задачу если она есть
-        linkLast(task); //добавить в конец списка
+        Node node = historyMap.remove(task.getId());
+        removeNode(node);
+        linkLast(task);
     }
 
     @Override
@@ -27,8 +25,8 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void remove(int id) {
-        //для удаления задачи из просмотра
-        //Добавьте вызов метода при удалении задач, чтобы они удалялись также из истории просмотров.
+        Node node = historyMap.remove(id);
+        removeNode(node);
     }
 
     public void removeNode(Node node) {
@@ -45,7 +43,6 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     public void linkLast(Task task) {
-        //lastNode.setTask(task);
         Node node = new Node(task, lastNode, null);
         if (firstNode == null) {
             firstNode = node;
@@ -57,7 +54,13 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     private ArrayList<Task> getTasks() {
-//собирать все задачи из списка в обычный ArrayList history
+        ArrayList<Task> tasks = new ArrayList<>(historyMap.size());
+        Node current = firstNode;
+        while (current != null) {
+            tasks.add(current.getTask());
+            current = current.getNextNode();
+        }
+        return tasks;
     }
 
     private void linkToNulls() {
