@@ -56,8 +56,8 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void deleteAllTasks() {
-        for (int i : tasks.keySet()) {
-            historyManager.remove(i);
+        for (int taskId : tasks.keySet()) {
+            historyManager.remove(taskId);
         }
         tasks.clear();
     }
@@ -81,7 +81,6 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void deleteEpic(Epic newEpic) {
-
         List<Integer> subtasksForDeletion = newEpic.getSubtasksIds();
         subtasks.remove(newEpic.getSubtasksIds());
         epics.remove(newEpic.getId());
@@ -99,11 +98,11 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void deleteAllEpics() {
-        for (int i : subtasks.keySet()) {
-            historyManager.remove(i);
+        for (int subtaskId : subtasks.keySet()) {
+            historyManager.remove(subtaskId);
         }
-        for (int j : epics.keySet()) {
-            historyManager.remove(j);
+        for (int epicId : epics.keySet()) {
+            historyManager.remove(epicId);
         }
         subtasks.clear();
         epics.clear();
@@ -160,8 +159,8 @@ public class InMemoryTaskManager implements TaskManager {
         newSubTask.setId(newId);
         newSubTask.setStatus(TaskStatus.NEW);
         subtasks.put(newSubTask.getId(), newSubTask);
-        int currEpicID = newSubTask.getEpicId();
-        Epic epic = getEpicById(currEpicID);
+        int currentEpicId = newSubTask.getEpicId();
+        Epic epic = getEpicById(currentEpicId);
         List<Integer> epicSubtasksIds = epic.getSubtasksIds();
         epicSubtasksIds.add(newSubTask.getId());
         epic.setSubtasksIds(epicSubtasksIds);
@@ -180,9 +179,9 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteSubTask(int subtaskId) {
         Subtask newSubTask = subtasks.get(subtaskId);
-        Epic currEpic = getEpicById(newSubTask.getEpicId());
+        Epic currentEpic = getEpicById(newSubTask.getEpicId());
         subtasks.remove(subtaskId);
-        checkEpicStatus(currEpic);
+        checkEpicStatus(currentEpic);
         historyManager.remove(subtaskId);
     }
 

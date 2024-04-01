@@ -5,7 +5,7 @@ import ru.yandex.practicum.tasktracker.utils.Managers;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class EpicTest {
 

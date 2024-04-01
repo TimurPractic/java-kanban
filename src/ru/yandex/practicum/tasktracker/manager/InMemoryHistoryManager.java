@@ -1,9 +1,11 @@
 package ru.yandex.practicum.tasktracker.manager;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import ru.yandex.practicum.tasktracker.model.Task;
-import ru.yandex.practicum.tasktracker.model.Node;
 
 public class InMemoryHistoryManager implements HistoryManager {
     public Node firstNode;
@@ -82,5 +84,41 @@ public class InMemoryHistoryManager implements HistoryManager {
     private void linkBetween(Node prevNode, Node nextNode) {
         prevNode.setNextNode(nextNode);
         nextNode.setPreviousNode(prevNode);
+    }
+
+    private static class Node {
+        private Task task;
+        private Node previousNode;
+        private Node nextNode;
+
+        public Node(Task task, Node previousNode, Node nextNode) {
+            this.task = task;
+            this.previousNode = previousNode;
+            this.nextNode = nextNode;
+        }
+
+        public Task getTask() {
+            return task;
+        }
+
+        public void setTask(Task task) {
+            this.task = task;
+        }
+
+        public Node getPreviousNode() {
+            return previousNode;
+        }
+
+        public void setPreviousNode(Node previousNode) {
+            this.previousNode = previousNode;
+        }
+
+        public Node getNextNode() {
+            return nextNode;
+        }
+
+        public void setNextNode(Node nextNode) {
+            this.nextNode = nextNode;
+        }
     }
 }
