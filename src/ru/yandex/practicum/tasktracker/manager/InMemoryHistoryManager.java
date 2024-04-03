@@ -10,11 +10,11 @@ import ru.yandex.practicum.tasktracker.model.Task;
 public class InMemoryHistoryManager implements HistoryManager {
     public Node firstNode;
     public Node lastNode;
-    private final Map<Integer, Node> historyMap = new HashMap<>();
+    private final Map<Integer, Node> historyIndex = new HashMap<>();
 
     @Override
     public void add(Task task) {
-        Node node = historyMap.remove(task.getId());
+        Node node = historyIndex.remove(task.getId());
         removeNode(node);
         linkLast(task);
     }
@@ -26,7 +26,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void remove(int id) {
-        Node node = historyMap.remove(id);
+        Node node = historyIndex.remove(id);
         removeNode(node);
     }
 
@@ -51,11 +51,11 @@ public class InMemoryHistoryManager implements HistoryManager {
             lastNode.setNextNode(node);
         }
         lastNode = node;
-        historyMap.put(task.getId(), node);
+        historyIndex.put(task.getId(), node);
     }
 
-    public ArrayList<Task> getTasks() {
-        ArrayList<Task> tasks = new ArrayList<>(historyMap.size());
+    public List<Task> getTasks() {
+        List<Task> tasks = new ArrayList<>(historyIndex.size());
         Node currentNode = firstNode;
         while (currentNode != null) {
             tasks.add(currentNode.getTask());
