@@ -83,7 +83,7 @@ class InMemoryTaskManagerTest {
         Subtask subtask1 = new Subtask();
         taskManager.addSubTask(subtask1);
         assertNotNull(taskManager.getSubtasks());
-        assertEquals(taskManager.getSubtasks().size(), 1);
+        assertEquals(1, taskManager.getSubtasks().size());
     }
 
     @Test

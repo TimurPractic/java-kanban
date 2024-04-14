@@ -8,7 +8,7 @@ public class Task {
 
     @Override
     public String toString() {
-        return  id +",TASK," + title + "," + status + "," + description + ",no epic";
+        return  id + ",TASK," + title + "," + status + "," + description;
     }
 
     public TaskStatus getStatus() {

@@ -1,25 +1,16 @@
 package ru.yandex.practicum.tasktracker;
 
-import ru.yandex.practicum.tasktracker.manager.InMemoryTaskManager;
 import ru.yandex.practicum.tasktracker.model.Epic;
 import ru.yandex.practicum.tasktracker.model.Subtask;
 import ru.yandex.practicum.tasktracker.model.Task;
 import ru.yandex.practicum.tasktracker.model.TaskStatus;
-import ru.yandex.practicum.tasktracker.utils.Managers;
 import ru.yandex.practicum.tasktracker.manager.FileBackedTaskManager;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
-import static ru.yandex.practicum.tasktracker.manager.FileBackedTaskManager.loadFromFile;
 
 public class Main {
 
     public static void main(String[] args) {
-       // InMemoryTaskManager taskManager = Managers.getDefault();
-      //  Path file = Paths.get(System.getProperty("user.dir"), "data", "data.csv");
         FileBackedTaskManager taskManager = new FileBackedTaskManager();
-        //loadFromFile(Paths path)
 // Создайте две задачи
         Task task = new Task();
         taskManager.addTask(task);
@@ -40,9 +31,7 @@ public class Main {
 // создать эпик без подзадач.
         Epic epic1 = new Epic();
         taskManager.addEpic(epic1);
-// Измените статусы созданных тасков, распечатайте их.
 // Запросите созданные задачи несколько раз в разном порядке.
-// После каждого запроса выведите историю и убедитесь, что в ней нет повторов.
         Task currentTask = taskManager.getTaskById(0);
         currentTask.setStatus(TaskStatus.IN_PROGRESS);
         taskManager.updateTask(currentTask);

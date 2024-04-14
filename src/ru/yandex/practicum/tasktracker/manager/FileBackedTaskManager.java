@@ -1,5 +1,6 @@
 package ru.yandex.practicum.tasktracker.manager;
 
+import ru.yandex.practicum.tasktracker.exception.ManagerSaveException;
 import ru.yandex.practicum.tasktracker.model.Epic;
 import ru.yandex.practicum.tasktracker.model.Subtask;
 import ru.yandex.practicum.tasktracker.model.Task;
@@ -158,50 +159,12 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 bufferedWriter.write("\n");
             }
             bufferedWriter.write("\n");
+            //bufferedWriter.write("History IDs:");
             bufferedWriter.write(historyToString(historyManager));
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new ManagerSaveException(e);
         }
     }
-
-//    public void save() {
-//        try (BufferedWriter bufferedWriter = Files.newBufferedWriter(tasksFile, StandardCharsets.UTF_8)) {
-//            for (Epic epic : super.getEpics()) {
-//                System.out.println("EPIC" + super.getEpics().size());
-//                System.out.println(epic.toString());
-//                bufferedWriter.write(epic.toString());
-//                bufferedWriter.write("\n");
-//            }
-//
-//            for (Task task : super.getTasks()) {
-//                System.out.println("TASK" + super.getTasks().size());
-//                System.out.println(task.toString());
-//                bufferedWriter.write(task.toString());
-//                bufferedWriter.write("\n");
-//            }
-//
-//            for (Subtask subtask : super.getSubtasks()) {
-//                System.out.println("SUBTASK" + super.getSubtasks().size());
-//                System.out.println(subtask.toString());
-//                bufferedWriter.write(subtask.toString());
-//                bufferedWriter.write("\n");
-//            }
-//
-//            bufferedWriter.write("\n");
-//            bufferedWriter.write(historyToString(historyManager));
-//            bufferedWriter.close();
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
-
-
-
-//    public String toString(Task task) {
-//        return "FileBackedTaskManager{" +
-//                "historyManager=" + historyManager +
-//                '}';
-//    }
 
     public static String historyToString(HistoryManager manager) {
         return manager.getHistory().stream()
@@ -211,49 +174,83 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     public static List<Integer> historyFromString(String value) {
-        List<Integer> iDs = new ArrayList<>();
+        List<Integer> ids = new ArrayList<>();
         String[] values = value.split(",");
         for (String id : values) {
-            iDs.add(Integer.valueOf(id));
+            ids.add(Integer.valueOf(id));
         }
-        return iDs;
+        return ids;
     }
 
-    public static FileBackedTaskManager loadFromFile(Path path) {
-        Integer maxId = 0;
+    public static FileBackedTaskManager loadFromFile(Path path) throws NullPointerException {
         FileBackedTaskManager fm = new FileBackedTaskManager();
         try (BufferedReader bufferedReader = Files.newBufferedReader((path), StandardCharsets.UTF_8)) {
+            bufferedReader.readLine();
             String line = bufferedReader.readLine();
-            while (!line.equals("")) {
-                String[] values = line.split(",");
-                Integer id = Integer.valueOf(values[0]);
-                String title = values[2];
-                TaskStatus status = TaskStatus.valueOf(values[3]);
-                String description = values[4];
-                switch (values[1]) {
-                    case ("TASK"):
-                        fm.addTask(new Task());
-                        break;
-                    case ("EPIC"):
-                        fm.addEpic(new Epic());
-                        break;
-                    case ("SUBTASK"):
-                        int epicId = Integer.valueOf(values[5]);
-                        fm.addSubTask(new Subtask());
-                        break;
+            while (line != null && !line.equals("")) {
+                try {
+                    String[] values = line.split(",");
+                    int id = Integer.parseInt(values[0]);
+                    String title = values[2];
+                    TaskStatus status = TaskStatus.valueOf(values[3]);
+                    String description = values[4];
+                    switch (values[1]) {
+                        case ("TASK"):
+                            Task task = new Task();
+                            task.setId(id);
+                            task.setTitle(title);
+                            task.setStatus(status);
+                            task.setDescription(description);
+                            fm.addTask(task);
+                            break;
+                        case ("EPIC"):
+                            if (values.length > 5) {
+                                Epic epic = new Epic();
+                                int epicId = Integer.parseInt(values[5]);
+                                epic.setId(epicId);
+                                epic.setTitle(title);
+                                epic.setStatus(status);
+                                epic.setDescription(description);
+                                fm.addEpic(epic);
+                            }
+                            break;
+                        case ("SUBTASK"):
+                            Subtask subtask = new Subtask();
+                            int epicId = Integer.parseInt(values[5]);
+                            subtask.setId(epicId);
+                            subtask.setTitle(title);
+                            subtask.setStatus(status);
+                            subtask.setDescription(description);
+                            subtask.setEpicId(epicId);
+                            fm.addSubTask(subtask);
+                            break;
+                        default: break;
+                    }
+                } catch (NullPointerException e) {
+                    System.out.println("Ошибка: значение равно null. Строка: " + line);
                 }
                 line = bufferedReader.readLine();
             }
             String history = bufferedReader.readLine();
-            String[] historyElements = history.split(",");
-            for (String historyElement : historyElements) {
-                Integer id = Integer.valueOf(historyElement);
-                fm.getTaskById(id);
-                fm.getEpicById(id);
-                fm.getSubtasksFromEpicById(id);
+            if (history != null && !history.isEmpty()) {
+                String[] historyElements = history.split(",");
+                for (String historyElement : historyElements) {
+                    if (historyElement != null) {
+                        try {
+                            Integer id = Integer.valueOf(historyElement);
+                            fm.getTaskById(id);
+                            fm.getEpicById(id);
+                            fm.getSubtasksFromEpicById(id);
+                        } catch (NumberFormatException e) {
+                            System.out.println("Ошибка: некорректные данные в истории. Элемент: " + historyElement);
+                        }
+                    } else {
+                        System.out.println("Ошибка: элемент массива истории равен null.");
+                    }
+                }
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new ManagerSaveException(e);
         }
         return fm;
     }
