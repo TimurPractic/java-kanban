@@ -11,12 +11,15 @@ import ru.yandex.practicum.tasktracker.manager.FileBackedTaskManager;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import static ru.yandex.practicum.tasktracker.manager.FileBackedTaskManager.loadFromFile;
+
 public class Main {
 
     public static void main(String[] args) {
        // InMemoryTaskManager taskManager = Managers.getDefault();
-        Path file = Paths.get(System.getProperty("user.dir"), "data", "data.csv");
+      //  Path file = Paths.get(System.getProperty("user.dir"), "data", "data.csv");
         FileBackedTaskManager taskManager = new FileBackedTaskManager();
+        //loadFromFile(Paths path)
 // Создайте две задачи
         Task task = new Task();
         taskManager.addTask(task);

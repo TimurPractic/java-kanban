@@ -5,6 +5,7 @@ import ru.yandex.practicum.tasktracker.model.Subtask;
 import ru.yandex.practicum.tasktracker.model.Task;
 import ru.yandex.practicum.tasktracker.model.TaskStatus;
 
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.io.BufferedReader;
@@ -16,8 +17,8 @@ import java.nio.file.Path;
 import java.util.stream.Collectors;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
-    private String fileName;
-    private Path tasksFile;
+    private String fileName = "filename.csv";
+    private Path tasksFile = Paths.get(fileName);
     private static final String HAT = "id,type,title,status,description,epic";
 
     @Override
@@ -142,6 +143,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     public void save() {
         try (BufferedWriter bufferedWriter = Files.newBufferedWriter(tasksFile, StandardCharsets.UTF_8)) {
+            bufferedWriter.write(HAT);
+            bufferedWriter.write("\n");
             for (Task task : super.getTasks()) {
                 bufferedWriter.write(task.toString());
                 bufferedWriter.write("\n");
@@ -161,11 +164,44 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         }
     }
 
-    public String toString(Task task) {
-        return "FileBackedTaskManager{" +
-                "historyManager=" + historyManager +
-                '}';
-    }
+//    public void save() {
+//        try (BufferedWriter bufferedWriter = Files.newBufferedWriter(tasksFile, StandardCharsets.UTF_8)) {
+//            for (Epic epic : super.getEpics()) {
+//                System.out.println("EPIC" + super.getEpics().size());
+//                System.out.println(epic.toString());
+//                bufferedWriter.write(epic.toString());
+//                bufferedWriter.write("\n");
+//            }
+//
+//            for (Task task : super.getTasks()) {
+//                System.out.println("TASK" + super.getTasks().size());
+//                System.out.println(task.toString());
+//                bufferedWriter.write(task.toString());
+//                bufferedWriter.write("\n");
+//            }
+//
+//            for (Subtask subtask : super.getSubtasks()) {
+//                System.out.println("SUBTASK" + super.getSubtasks().size());
+//                System.out.println(subtask.toString());
+//                bufferedWriter.write(subtask.toString());
+//                bufferedWriter.write("\n");
+//            }
+//
+//            bufferedWriter.write("\n");
+//            bufferedWriter.write(historyToString(historyManager));
+//            bufferedWriter.close();
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
+
+
+
+//    public String toString(Task task) {
+//        return "FileBackedTaskManager{" +
+//                "historyManager=" + historyManager +
+//                '}';
+//    }
 
     public static String historyToString(HistoryManager manager) {
         return manager.getHistory().stream()
