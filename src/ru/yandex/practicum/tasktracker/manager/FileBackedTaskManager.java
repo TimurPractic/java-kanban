@@ -3,116 +3,135 @@ package ru.yandex.practicum.tasktracker.manager;
 import ru.yandex.practicum.tasktracker.model.Epic;
 import ru.yandex.practicum.tasktracker.model.Subtask;
 import ru.yandex.practicum.tasktracker.model.Task;
+import ru.yandex.practicum.tasktracker.model.TaskStatus;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.stream.Collectors;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
+    private String fileName;
+    private Path tasksFile;
+    private static final String HAT = "id,type,title,status,description,epic";
+
     @Override
     public List<Task> getTasks() {
+        List<Task> lt = super.getTasks();
         save();
-        return super.getTasks();
+        return lt;
         }
 
     @Override
     public List<Subtask> getSubtasks() {
+        List<Subtask> ls = super.getSubtasks();
         save();
-        return super.getSubtasks();
+        return ls;
         }
 
     @Override
     public List<Epic> getEpics() {
+        List<Epic> le = super.getEpics();
         save();
-        return super.getEpics();
+        return le;
     }
 
     @Override
     public void addTask(Task newTask) {
-        save();
         super.addTask(newTask);
+        save();
     }
 
     @Override
     public void deleteTask(int taskId) {
-        save();
         super.deleteTask(taskId);
+        save();
     }
 
     @Override
     public void updateTask(Task task) {
-        save();
         super.updateTask(task);
+        save();
     }
 
     @Override
     public void deleteAllTasks() {
-        save();
         super.deleteAllTasks();
+        save();
     }
 
     @Override
     public Task getTaskById(int taskId) {
+        Task t = super.getTaskById(taskId);
         save();
-        return super.getTaskById(taskId);
+        return t;
     }
 
     @Override
     public void addEpic(Epic newEpic) {
-        save();
         super.addEpic(newEpic);
+        save();
     }
 
     @Override
     public void deleteEpic(Epic newEpic) {
-        save();
         super.deleteEpic(newEpic);
+        save();
     }
 
     @Override
     public void updateEpic(Epic epic) {
-        save();
         super.updateEpic(epic);
+        save();
     }
 
     @Override
     public void deleteAllEpics() {
-        save();
         super.deleteAllEpics();
+        save();
     }
 
     @Override
     public Epic getEpicById(Integer epicId) {
+        Epic e = super.getEpicById(epicId);
         save();
-        return super.getEpicById(epicId);
+        return e;
     }
 
     @Override
     public List<Task> getSubtasksFromEpicById(Integer epicId) {
+        List<Task> lt2 = super.getSubtasksFromEpicById(epicId);
         save();
-        return super.getSubtasksFromEpicById(epicId);
+        return lt2;
     }
 
     @Override
     public void addSubTask(Subtask newSubTask) {
-        save();
         super.addSubTask(newSubTask);
+        save();
     }
 
     @Override
     public void updateSubTask(Subtask subtask) {
-        super.updateSubTask(subtask);
         save();
+        super.updateSubTask(subtask);
     }
 
     @Override
     public void deleteSubTask(int subtaskId) {
-        super.deleteSubTask(subtaskId);
         save();
+        super.deleteSubTask(subtaskId);
     }
 
     @Override
     public void deleteAllSubTasks() {
-        super.deleteAllSubTasks();
         save();
+        super.deleteAllSubTasks();
     }
 
     @Override
@@ -120,10 +139,26 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         save();
         return super.getSubtaskById(subtaskId);
         }
-///////////////////////////////////////////////////////////////////////////////////
 
     public void save() {
-
+        try (BufferedWriter bufferedWriter = Files.newBufferedWriter(tasksFile, StandardCharsets.UTF_8)) {
+            for (Task task : super.getTasks()) {
+                bufferedWriter.write(task.toString());
+                bufferedWriter.write("\n");
+            }
+            for (Epic epic : super.getEpics()) {
+                bufferedWriter.write(epic.toString());
+                bufferedWriter.write("\n");
+            }
+            for (Subtask subtask : super.getSubtasks()) {
+                bufferedWriter.write(subtask.toString());
+                bufferedWriter.write("\n");
+            }
+            bufferedWriter.write("\n");
+            bufferedWriter.write(historyToString(historyManager));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public String toString(Task task) {
@@ -133,14 +168,57 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     public static String historyToString(HistoryManager manager) {
-
+        return manager.getHistory().stream()
+                .map(Task::getId)
+                .map(String::valueOf)
+                .collect(Collectors.joining(","));
     }
 
     public static List<Integer> historyFromString(String value) {
-
+        List<Integer> iDs = new ArrayList<>();
+        String[] values = value.split(",");
+        for (String id : values) {
+            iDs.add(Integer.valueOf(id));
+        }
+        return iDs;
     }
 
-    public static FileBackedTaskManager loadFromFile(File file) {
-
+    public static FileBackedTaskManager loadFromFile(Path path) {
+        Integer maxId = 0;
+        FileBackedTaskManager fm = new FileBackedTaskManager();
+        try (BufferedReader bufferedReader = Files.newBufferedReader((path), StandardCharsets.UTF_8)) {
+            String line = bufferedReader.readLine();
+            while (!line.equals("")) {
+                String[] values = line.split(",");
+                Integer id = Integer.valueOf(values[0]);
+                String title = values[2];
+                TaskStatus status = TaskStatus.valueOf(values[3]);
+                String description = values[4];
+                switch (values[1]) {
+                    case ("TASK"):
+                        fm.addTask(new Task());
+                        break;
+                    case ("EPIC"):
+                        fm.addEpic(new Epic());
+                        break;
+                    case ("SUBTASK"):
+                        int epicId = Integer.valueOf(values[5]);
+                        fm.addSubTask(new Subtask());
+                        break;
+                }
+                line = bufferedReader.readLine();
+            }
+            String history = bufferedReader.readLine();
+            String[] historyElements = history.split(",");
+            for (String historyElement : historyElements) {
+                Integer id = Integer.valueOf(historyElement);
+                fm.getTaskById(id);
+                fm.getEpicById(id);
+                fm.getSubtasksFromEpicById(id);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return fm;
     }
 }
