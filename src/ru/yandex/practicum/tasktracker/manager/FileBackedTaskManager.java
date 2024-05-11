@@ -18,29 +18,34 @@ import java.nio.file.Path;
 import java.util.stream.Collectors;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
-    private String fileName = "filename.csv";
-    private Path tasksFile = Paths.get(fileName);
+    private String fileName;
+    private Path tasksFile;
     private static final String HAT = "id,type,title,status,description,epic";
+
+    public FileBackedTaskManager() {
+        this.fileName = "filename.csv";
+        this.tasksFile = Paths.get(fileName);
+    }
 
     @Override
     public List<Task> getTasks() {
-        List<Task> lt = super.getTasks();
+        List<Task> tasks = super.getTasks();
         save();
-        return lt;
-        }
+        return tasks;
+    }
 
     @Override
     public List<Subtask> getSubtasks() {
-        List<Subtask> ls = super.getSubtasks();
+        List<Subtask> subtasks = super.getSubtasks();
         save();
-        return ls;
-        }
+        return subtasks;
+    }
 
     @Override
     public List<Epic> getEpics() {
-        List<Epic> le = super.getEpics();
+        List<Epic> epics = super.getEpics();
         save();
-        return le;
+        return epics;
     }
 
     @Override
@@ -182,73 +187,58 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
 
-    public static FileBackedTaskManager loadFromFile(Path path) throws NullPointerException {
+    public static FileBackedTaskManager loadFromFile(Path path) {
         FileBackedTaskManager fm = new FileBackedTaskManager();
         try (BufferedReader bufferedReader = Files.newBufferedReader((path), StandardCharsets.UTF_8)) {
             bufferedReader.readLine();
             String line = bufferedReader.readLine();
             while (line != null && !line.equals("")) {
-                try {
-                    String[] values = line.split(",");
-                    int id = Integer.parseInt(values[0]);
-                    String title = values[2];
-                    TaskStatus status = TaskStatus.valueOf(values[3]);
-                    String description = values[4];
-                    switch (values[1]) {
-                        case ("TASK"):
-                            Task task = new Task();
-                            task.setTitle(title);
-                            task.setStatus(status);
-                            task.setDescription(description);
-                            fm.addTask(task);
-                            break;
-                        case ("EPIC"):
-                            Epic epic = new Epic();
-                            epic.setId(id);
-                            epic.setTitle(title);
-                            epic.setStatus(status);
-                            epic.setDescription(description);
-                            fm.addEpic(epic);
-                            break;
-                        case ("SUBTASK"):
-                            Subtask subtask = new Subtask();
-                            int epicId = Integer.parseInt(values[5]);
-                            subtask.setId(id);
-                            subtask.setTitle(title);
-                            subtask.setStatus(status);
-                            subtask.setDescription(description);
-                            subtask.setEpicId(epicId);
-                            fm.addSubTask(subtask);
-                            break;
-                        default: break;
-                    }
-                } catch (NullPointerException e) {
-                    System.out.println("Ошибка: значение равно null. Строка: " + line);
+                String[] values = line.split(",");
+                int id = Integer.parseInt(values[0]);
+                String title = values[2];
+                TaskStatus status = TaskStatus.valueOf(values[3]);
+                String description = values[4];
+                switch (values[1]) {
+                    case ("TASK"):
+                        Task task = new Task();
+                        task.setTitle(title);
+                        task.setStatus(status);
+                        task.setDescription(description);
+                        fm.addTask(task);
+                        break;
+                    case ("EPIC"):
+                        Epic epic = new Epic();
+                        epic.setId(id);
+                        epic.setTitle(title);
+                        epic.setStatus(status);
+                        epic.setDescription(description);
+                        fm.addEpic(epic);
+                        break;
+                    case ("SUBTASK"):
+                        Subtask subtask = new Subtask();
+                        int epicId = Integer.parseInt(values[5]);
+                        subtask.setId(id);
+                        subtask.setTitle(title);
+                        subtask.setStatus(status);
+                        subtask.setDescription(description);
+                        subtask.setEpicId(epicId);
+                        fm.addSubTask(subtask);
+                        break;
+                    default: break;
                 }
                 line = bufferedReader.readLine();
             }
-
             String history = bufferedReader.readLine();
             if (history != null && !history.isEmpty()) {
                 String[] historyElements = history.split(",");
                 for (String historyElement : historyElements) {
-                    if (historyElement != null) {
-                        try {
-                            Integer id = Integer.valueOf(historyElement);
-                            if (fm.getTaskById(id) != null) {
-                                fm.getTaskById(id);
-                            } else if (fm.getEpicById(id) != null) {
-                                fm.getEpicById(id);
-                            } else if (fm.getSubtaskById(id) != null) {
-                                fm.getSubtaskById(id);
-                            } else {
-                                System.out.println("Элемент истории с id=" + id + " не найден.");
-                            }
-                        } catch (NullPointerException e) {
-                            System.out.println("Ошибка: некорректные данные в истории. Элемент: " + historyElement);
-                        }
+                    Integer id = Integer.valueOf(historyElement);
+                    if (fm.getTaskById(id) != null) {
+                        fm.getTaskById(id);
+                    } else if (fm.getEpicById(id) != null) {
+                        fm.getEpicById(id);
                     } else {
-                        System.out.println("Ошибка: элемент массива истории равен null.");
+                        fm.getSubtaskById(id);
                     }
                 }
             }
