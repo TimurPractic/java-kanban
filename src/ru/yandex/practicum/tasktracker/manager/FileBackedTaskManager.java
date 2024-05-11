@@ -159,7 +159,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 bufferedWriter.write("\n");
             }
             bufferedWriter.write("\n");
-            //bufferedWriter.write("History IDs:");
             bufferedWriter.write(historyToString(historyManager));
         } catch (IOException e) {
             throw new ManagerSaveException(e);
@@ -182,6 +181,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         return ids;
     }
 
+
     public static FileBackedTaskManager loadFromFile(Path path) throws NullPointerException {
         FileBackedTaskManager fm = new FileBackedTaskManager();
         try (BufferedReader bufferedReader = Files.newBufferedReader((path), StandardCharsets.UTF_8)) {
@@ -197,27 +197,23 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                     switch (values[1]) {
                         case ("TASK"):
                             Task task = new Task();
-                            task.setId(id);
                             task.setTitle(title);
                             task.setStatus(status);
                             task.setDescription(description);
                             fm.addTask(task);
                             break;
                         case ("EPIC"):
-                            if (values.length > 5) {
-                                Epic epic = new Epic();
-                                int epicId = Integer.parseInt(values[5]);
-                                epic.setId(epicId);
-                                epic.setTitle(title);
-                                epic.setStatus(status);
-                                epic.setDescription(description);
-                                fm.addEpic(epic);
-                            }
+                            Epic epic = new Epic();
+                            epic.setId(id);
+                            epic.setTitle(title);
+                            epic.setStatus(status);
+                            epic.setDescription(description);
+                            fm.addEpic(epic);
                             break;
                         case ("SUBTASK"):
                             Subtask subtask = new Subtask();
                             int epicId = Integer.parseInt(values[5]);
-                            subtask.setId(epicId);
+                            subtask.setId(id);
                             subtask.setTitle(title);
                             subtask.setStatus(status);
                             subtask.setDescription(description);
@@ -231,6 +227,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 }
                 line = bufferedReader.readLine();
             }
+
             String history = bufferedReader.readLine();
             if (history != null && !history.isEmpty()) {
                 String[] historyElements = history.split(",");
@@ -238,10 +235,16 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                     if (historyElement != null) {
                         try {
                             Integer id = Integer.valueOf(historyElement);
-                            fm.getTaskById(id);
-                            fm.getEpicById(id);
-                            fm.getSubtasksFromEpicById(id);
-                        } catch (NumberFormatException e) {
+                            if (fm.getTaskById(id) != null) {
+                                fm.getTaskById(id);
+                            } else if (fm.getEpicById(id) != null) {
+                                fm.getEpicById(id);
+                            } else if (fm.getSubtaskById(id) != null) {
+                                fm.getSubtaskById(id);
+                            } else {
+                                System.out.println("Элемент истории с id=" + id + " не найден.");
+                            }
+                        } catch (NullPointerException e) {
                             System.out.println("Ошибка: некорректные данные в истории. Элемент: " + historyElement);
                         }
                     } else {
