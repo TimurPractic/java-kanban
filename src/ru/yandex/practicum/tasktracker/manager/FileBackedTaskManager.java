@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 public class FileBackedTaskManager extends InMemoryTaskManager {
     private String fileName;
     private Path tasksFile;
-    private static final String HAT = "id,type,title,status,description,epic";
+    private static final String CSV_HEADER = "id,type,title,status,description,epic";
 
     public FileBackedTaskManager() {
         this.fileName = "filename.csv";
@@ -149,7 +149,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     public void save() {
         try (BufferedWriter bufferedWriter = Files.newBufferedWriter(tasksFile, StandardCharsets.UTF_8)) {
-            bufferedWriter.write(HAT);
+            bufferedWriter.write(CSV_HEADER);
             bufferedWriter.write("\n");
             for (Task task : super.getTasks()) {
                 bufferedWriter.write(task.toString());
