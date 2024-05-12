@@ -54,7 +54,7 @@ class InMemoryHistoryManagerTest {
         assertEquals(1,taskManager.historyManager.getHistory().size());
     }
     @Test
-    public void ifThreeTaskReceivedSeveralTimesHistoryListShouldContainThreeRecordInRightOrderTest() {
+    void ifThreeTaskReceivedSeveralTimesHistoryListShouldContainThreeRecordInRightOrderTest() {
         Task task1 = new Task();
         taskManager.addTask(task1);
         Task task2 = new Task();
@@ -71,7 +71,7 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    public void ifThreeSubTasksInOneEpicReceivedHistoryListShouldContainThreeRecordInRightOrderTest() {
+    void ifThreeSubTasksInOneEpicReceivedHistoryListShouldContainThreeRecordInRightOrderTest() {
         Epic epic = new Epic();
         taskManager.addEpic(epic);
         Subtask subtask1 = new Subtask();
