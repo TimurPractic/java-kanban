@@ -46,9 +46,11 @@ class InMemoryHistoryManagerTest {
     void historyListRemovalWorksOKTest(){
         Task task1 = new Task();
         taskManager.addTask(task1);
+        System.out.println(task1);
         assertEquals(1,taskManager.historyManager.getHistory().size());
         Task task2 = new Task();
         taskManager.addTask(task2);
+        System.out.println(task2);
         assertEquals(2,taskManager.historyManager.getHistory().size());
         taskManager.deleteTask(task2.getId());
         assertEquals(1,taskManager.historyManager.getHistory().size());

@@ -120,6 +120,7 @@ class InMemoryTaskManagerTest {
         Subtask subtask3 = new Subtask();
         taskManager.addSubTask(subtask3);
         subtask3.setEpicId(epic.getId());
+        System.out.println(subtask2);
         taskManager.deleteSubTask(subtask2.getId());
         Subtask subtask4 = new Subtask();
         taskManager.addSubTask(subtask4);
