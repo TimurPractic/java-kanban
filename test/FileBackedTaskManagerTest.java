@@ -28,47 +28,44 @@ class FileBackedTaskManagerTest {
         task.setStatus(TaskStatus.NEW);
         task.setDescription("This is task");
         taskManager.addTask(task);
-        task.setStartTime(LocalDateTime.of(2024,05,14,15,00));
+        task.setStartTime(LocalDateTime.of(2024,5,14,15,0));
         task.setDuration(5);
-        System.out.println(task);
 
         Epic epic = new Epic();
         epic.setTitle("Epic1");
         epic.setStatus(TaskStatus.NEW);
         epic.setDescription("This is epic");
-        //epic.setDuration(0);
+        epic.setStartTime(LocalDateTime.of(2024,5,14,20,0));
+        epic.setDuration(10);
         taskManager.addEpic(epic);
-        System.out.println(epic);
 
         Subtask subtask1 = new Subtask();
         subtask1.setEpicId(epic.getId());
         subtask1.setTitle("Subtask1");
         subtask1.setStatus(TaskStatus.NEW);
         subtask1.setDescription("This is subtask1");
-        taskManager.addSubTask(subtask1);
         subtask1.setStartTime(LocalDateTime.of(2024,5,14,20,0));
         subtask1.setDuration(10);
+        taskManager.addSubTask(subtask1);
         epic.setStartTime(subtask1.getStartTime());
-        System.out.println(subtask1);
-        System.out.println(epic);
 
         Subtask subtask2 = new Subtask();
         subtask2.setEpicId(epic.getId());
         subtask2.setTitle("Subtask2");
         subtask2.setStatus(TaskStatus.NEW);
         subtask2.setDescription("This is subtask2");
-        taskManager.addSubTask(subtask2);
         subtask2.setStartTime(LocalDateTime.of(2024,5,14,20,15));
         subtask2.setDuration(11);
+        taskManager.addSubTask(subtask2);
 
         Subtask subtask3 = new Subtask();
         subtask3.setEpicId(epic.getId());
         subtask3.setTitle("Subtask3");
         subtask3.setStatus(TaskStatus.NEW);
         subtask3.setDescription("This is subtask3");
-        taskManager.addSubTask(subtask3);
         subtask3.setStartTime(LocalDateTime.of(2024,5,14,20,30));
         subtask3.setDuration(12);
+        taskManager.addSubTask(subtask3);
         taskManager.setEpicDuration(epic);
 
         taskManager = FileBackedTaskManager.loadFromFile(tasksFile);

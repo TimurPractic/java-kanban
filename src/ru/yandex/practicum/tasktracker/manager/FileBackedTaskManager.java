@@ -209,7 +209,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 TaskStatus status = TaskStatus.valueOf(values[3]);
                 String description = values[4];
                 long minutes = Duration.parse(values[7]).toMinutes();
-                //LocalDateTime localDateTime = LocalDateTime.parse(dateString, formatter);
                 LocalDateTime startTime = LocalDateTime.parse(values[6],formatter);
 
                 switch (values[1]) {
@@ -251,20 +250,20 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 }
                 line = bufferedReader.readLine();
             }
-//            String history = bufferedReader.readLine();
-//            if (history != null && !history.isEmpty()) {
-//                String[] historyElements = history.split(",");
-//                for (String historyElement : historyElements) {
-//                    Integer id = Integer.valueOf(historyElement);
-//                    if (fm.getTaskById(id) != null) {
-//                        fm.getTaskById(id);
-//                    } else if (fm.getEpicById(id) != null) {
-//                        fm.getEpicById(id);
-//                    } else {
-//                        fm.getSubtaskById(id);
-//                    }
-//                }
-//            }
+            String history = bufferedReader.readLine();
+            if (history != null && !history.isEmpty()) {
+                String[] historyElements = history.split(",");
+                for (String historyElement : historyElements) {
+                    Integer id = Integer.valueOf(historyElement);
+                    if (fm.getTaskById(id) != null) {
+                        fm.getTaskById(id);
+                    } else if (fm.getEpicById(id) != null) {
+                        fm.getEpicById(id);
+                    } else {
+                        fm.getSubtaskById(id);
+                    }
+                }
+            }
         } catch (IOException e) {
             throw new ManagerSaveException(e);
         }

@@ -13,6 +13,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Stream;
@@ -28,7 +29,6 @@ public class InMemoryTaskManager implements TaskManager {
             Comparator.nullsLast(Comparator.naturalOrder())));
 
     private int idSequence = 0;
-    private LocalDateTime defaultDateTime = LocalDateTime.of(2000, 1, 1, 0, 0);;
 
     @Override
     public List<Task> getTasks() {
@@ -51,8 +51,6 @@ public class InMemoryTaskManager implements TaskManager {
             int newId = idSequence++;
             newTask.setId(newId);
             newTask.setStatus(TaskStatus.NEW);
-//            newTask.setStartTime(defaultDateTime.plusSeconds(idSequence));
-//            newTask.setDuration(0);
             tasks.put(newTask.getId(), newTask);
             historyManager.add(newTask);
             prioritizedTasks.add(newTask);
@@ -94,8 +92,6 @@ public class InMemoryTaskManager implements TaskManager {
             newEpic.setId(newId);
             newEpic.setStatus(TaskStatus.NEW);
             newEpic.setSubtasksIds(new ArrayList<>());
-//            newEpic.setStartTime(findEarliestStartTime(getSubtasksFromEpicById(newId)));
-//            newEpic.setDuration(0);
             epics.put(newEpic.getId(), newEpic);
             historyManager.add(newEpic);
             prioritizedTasks.add(newEpic);
@@ -142,46 +138,48 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     public void checkEpicStatus(Epic epic) {
-        boolean isReady = true;
-        boolean isInProgress = epic.getSubtasksIds().stream()
-                .map(subId -> subtasks.get(subId).getStatus())
-                .anyMatch(status -> status.equals(TaskStatus.IN_PROGRESS));
+        boolean hasInProgressOrDone = epic.getSubtasksIds().stream()
+                .map(subId -> subtasks.get(subId))
+                .filter(Objects::nonNull)
+                .map(Subtask::getStatus)
+                .anyMatch(status -> status.equals(TaskStatus.IN_PROGRESS) || status.equals(TaskStatus.DONE));
 
-        if (!isInProgress) {
-            isReady = epic.getSubtasksIds().stream()
-                    .map(subId -> subtasks.get(subId).getStatus())
-                    .allMatch(status -> status.equals(TaskStatus.DONE));
-        }
-        if (isInProgress) {
-            epic.setStatus(TaskStatus.IN_PROGRESS);
-        } else if (isReady) {
+        boolean allDone = epic.getSubtasksIds().stream()
+                .map(subId -> subtasks.get(subId))
+                .filter(Objects::nonNull)
+                .map(Subtask::getStatus)
+                .allMatch(status -> status.equals(TaskStatus.DONE));
+
+        if (allDone) {
             epic.setStatus(TaskStatus.DONE);
+        } else if (hasInProgressOrDone) {
+            epic.setStatus(TaskStatus.IN_PROGRESS);
         } else {
             epic.setStatus(TaskStatus.NEW);
         }
     }
 
     public void setEpicDuration(Epic epic) {
-            if (epic != null && epics.containsKey(epic.getId())) {
-                List<Integer> subtaskIds = epic.getSubtasksIds();
-                Stream<Subtask> subtasksStream = getSubtasks().stream()
-                        .filter(subtask -> subtaskIds.contains(subtask.getId()) &&
-                                subtask.getStartTime() != null &&
-                                subtask.getDuration() != null);
-                Optional<LocalDateTime> minStartTime = subtasksStream
-                        .map(Subtask::getStartTime)
-                        .min(LocalDateTime::compareTo);
-                subtasksStream = getSubtasks().stream()
-                        .filter(subtask -> subtask.getDuration() != null);
-                Duration duration = subtasksStream
-                        .map(Subtask::getDuration)
-                        .reduce(Duration.ZERO, Duration::plus);
-                LocalDateTime endTime = minStartTime.map(start -> start.plus(duration)).orElse(null);
-                epic.setStartTime(minStartTime.orElse(null));
-                epic.setEndTime(endTime);
-                epic.setDuration(duration.toMinutes());
-            }
+        if (epic != null && epics.containsKey(epic.getId())) {
+            List<Integer> subtaskIds = epic.getSubtasksIds();
+            Stream<Subtask> subtasksStream = getSubtasks().stream()
+                    .filter(subtask -> subtaskIds.contains(subtask.getId()) &&
+                            subtask.getStartTime() != null &&
+                            subtask.getDuration() != null);
+            Optional<LocalDateTime> minStartTime = subtasksStream
+                    .map(Subtask::getStartTime)
+                    .min(LocalDateTime::compareTo);
+            subtasksStream = getSubtasks().stream()
+                    .filter(subtask -> subtask.getDuration() != null);
+            Duration duration = subtasksStream
+                    .map(Subtask::getDuration)
+                    .reduce(Duration.ZERO, Duration::plus);
+            LocalDateTime endTime = minStartTime.map(start -> start.plus(duration)).orElse(null);
+            epic.setStartTime(minStartTime.orElse(null));
+            epic.setEndTime(endTime);
+            epic.setDuration(duration.toMinutes());
         }
+    }
 
     @Override
     public Epic getEpicById(Integer epicId) {
@@ -204,13 +202,21 @@ public class InMemoryTaskManager implements TaskManager {
         return epicSubtasks;
     }
 
+    public LocalDateTime getEpicEndTime(Epic epic) {
+        return epic.getSubtasksIds().stream()
+                .map(subtasks::get)
+                .filter(Objects::nonNull)
+                .map(Subtask::getEndTime)
+                .filter(Objects::nonNull)
+                .max(LocalDateTime::compareTo)
+                .orElse(null);
+    }
+
     @Override
     public void addSubTask(Subtask newSubTask) {
         int newId = idSequence++;
         newSubTask.setId(newId);
         newSubTask.setStatus(TaskStatus.NEW);
-//        newSubTask.setStartTime(defaultDateTime.plusSeconds(idSequence));
-//        newSubTask.setDuration(idSequence);
         subtasks.put(newSubTask.getId(), newSubTask);
         int currentEpicId = newSubTask.getEpicId();
         Epic epic = getEpicById(currentEpicId);

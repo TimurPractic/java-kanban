@@ -157,6 +157,7 @@ class EpicTest {
         subtask1.setStartTime(LocalDateTime.of(2024,5,14,20,0));
         subtask1.setDuration(10);
         taskManager.addSubTask(subtask1);
+        taskManager.checkEpicStatus(epic);
 
         Subtask subtask2 = new Subtask();
         subtask2.setEpicId(epic.getId());
@@ -166,14 +167,11 @@ class EpicTest {
         subtask2.setDuration(11);
         taskManager.addSubTask(subtask2);
         subtask2.setStatus(TaskStatus.DONE);
-        System.out.println(subtask2);
+        taskManager.checkEpicStatus(epic);
 
         taskManager.updateSubTask(subtask1);
-        System.out.println(subtask2);
         taskManager.updateSubTask(subtask2);
-        System.out.println(epic);
-        System.out.println(subtask1);
-        System.out.println(subtask2);
+        taskManager.checkEpicStatus(epic);
 
         assertEquals(TaskStatus.IN_PROGRESS, epic.getStatus(), "Неверный статус эпика");
     }
@@ -238,9 +236,10 @@ class EpicTest {
         subtask2.setDuration(11);
         taskManager.addSubTask(subtask2);
         subtask2.setStatus(TaskStatus.DONE);
+        taskManager.setEpicDuration(epic);
 
-        //assertEquals(subtask2.getEndTime(), epic.getEndTime(), "Неверное время завершения эпика");
+        assertEquals(subtask2.getEndTime(), taskManager.getEpicEndTime(epic), "Неверное время завершения эпика");
         assertEquals(subtask1.getStartTime(), epic.getStartTime(), "Неверное время начала эпика");
-        assertEquals(21, epic.getDuration().toSeconds(), "Неверная продолжительность эпика");
+        assertEquals(21, epic.getDuration().toMinutes(), "Неверная продолжительность эпика");
     }
 }

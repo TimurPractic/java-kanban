@@ -5,6 +5,7 @@ import ru.yandex.practicum.tasktracker.model.Task;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.tasktracker.utils.Managers;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -111,17 +112,40 @@ class InMemoryTaskManagerTest {
         InMemoryTaskManager taskManager = Managers.getDefault();
         Epic epic = new Epic();
         taskManager.addEpic(epic);
+
         Subtask subtask1 = new Subtask();
+        subtask1.setTitle("Subtask1");
+        subtask1.setDescription("This is subtask1");
+        subtask1.setStartTime(LocalDateTime.of(2024,5,14,20,0));
+        subtask1.setDuration(10);
         taskManager.addSubTask(subtask1);
         subtask1.setEpicId(epic.getId());
+        taskManager.checkEpicStatus(epic);
+        taskManager.setEpicDuration(epic);
+
         Subtask subtask2 = new Subtask();
+        subtask2.setTitle("Subtask2");
+        subtask2.setDescription("This is subtask2");
+        subtask2.setStartTime(LocalDateTime.of(2024,5,14,20,11));
+        subtask2.setDuration(10);
         taskManager.addSubTask(subtask2);
         subtask2.setEpicId(epic.getId());
+        taskManager.checkEpicStatus(epic);
+        taskManager.setEpicDuration(epic);
+
         Subtask subtask3 = new Subtask();
+        subtask3.setTitle("Subtask3");
+        subtask3.setDescription("This is subtask3");
+        subtask3.setStartTime(LocalDateTime.of(2024,5,14,20,22));
+        subtask3.setDuration(10);
         taskManager.addSubTask(subtask3);
         subtask3.setEpicId(epic.getId());
-        System.out.println(subtask2);
+        taskManager.checkEpicStatus(epic);
+        taskManager.setEpicDuration(epic);
+
         taskManager.deleteSubTask(subtask2.getId());
+        taskManager.checkEpicStatus(epic);
+
         Subtask subtask4 = new Subtask();
         taskManager.addSubTask(subtask4);
         subtask4.setEpicId(epic.getId());
