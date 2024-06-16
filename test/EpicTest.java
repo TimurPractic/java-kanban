@@ -1,3 +1,4 @@
+import org.junit.jupiter.api.BeforeEach;
 import ru.yandex.practicum.tasktracker.model.Epic;
 import ru.yandex.practicum.tasktracker.manager.InMemoryTaskManager;
 import org.junit.jupiter.api.Test;
@@ -13,10 +14,18 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class EpicTest {
 
+    InMemoryTaskManager taskManager;
+    Epic epic;
+
+
+    @BeforeEach
+    void setUp() {
+        taskManager = Managers.getDefault();
+        epic = new Epic();
+    }
+
     @Test
     void equalEpicsAreEqualIfIDEqualTest(){
-        InMemoryTaskManager taskManager = Managers.getDefault();
-        Epic epic = new Epic();
         taskManager.addEpic(epic);
         final List<Epic> epicers = taskManager.getEpics();
         assertEquals(epicers.get(0), epicers.get(0), "Задачи не совпадают.");
@@ -25,8 +34,6 @@ class EpicTest {
 
     @Test
     void addEpicTest() {
-        InMemoryTaskManager taskManager = Managers.getDefault();
-        Epic epic = new Epic();
         taskManager.addEpic(epic);
         assertNotNull(taskManager.getEpicById(0), "Задача не найдена.");
         assertEquals(epic, taskManager.getEpicById(0), "Задачи не совпадают.");
@@ -39,8 +46,6 @@ class EpicTest {
 
     @Test
     void epicStatusSubTasksNewTest() {
-        InMemoryTaskManager taskManager = Managers.getDefault();
-        Epic epic = new Epic();
         epic.setTitle("Epic1");
         epic.setStatus(TaskStatus.NEW);
         epic.setDescription("This is epic");
@@ -72,8 +77,6 @@ class EpicTest {
 
     @Test
     void epicStatusSubTaskInProgressTest() {
-        InMemoryTaskManager taskManager = Managers.getDefault();
-        Epic epic = new Epic();
         epic.setTitle("Epic1");
         epic.setStatus(TaskStatus.NEW);
         epic.setDescription("This is epic");
@@ -106,8 +109,6 @@ class EpicTest {
 
     @Test
     void epicStatusSubTasksDoneTest() {
-        InMemoryTaskManager taskManager = Managers.getDefault();
-        Epic epic = new Epic();
         epic.setTitle("Epic1");
         epic.setStatus(TaskStatus.NEW);
         epic.setDescription("This is epic");
@@ -141,8 +142,6 @@ class EpicTest {
 
     @Test
     void epicStatusSubTasksDoneEpicInProgressTest() {
-        InMemoryTaskManager taskManager = Managers.getDefault();
-        Epic epic = new Epic();
         epic.setTitle("Epic1");
         epic.setStatus(TaskStatus.NEW);
         epic.setDescription("This is epic");
@@ -178,8 +177,6 @@ class EpicTest {
 
     @Test
     void checkSizeEpicWithSubTasksTest() {
-        InMemoryTaskManager taskManager = Managers.getDefault();
-        Epic epic = new Epic();
         epic.setTitle("Epic1");
         epic.setStatus(TaskStatus.NEW);
         epic.setDescription("This is epic");
@@ -210,8 +207,6 @@ class EpicTest {
 
     @Test
     void lifespanOfEpicTest() {
-        InMemoryTaskManager taskManager = Managers.getDefault();
-        Epic epic = new Epic();
         epic.setTitle("Epic1");
         epic.setStatus(TaskStatus.NEW);
         epic.setDescription("This is epic");

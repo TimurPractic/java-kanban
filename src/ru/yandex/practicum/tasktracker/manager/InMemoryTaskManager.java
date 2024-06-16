@@ -274,7 +274,7 @@ public class InMemoryTaskManager implements TaskManager {
         return prioritizedTasks.stream().toList();
     }
 
-    public boolean validator(Task task) {
+    boolean validator(Task task) {
         if (task.getStartTime() == null || task.getEndTime() == null) {
             return true;
         }
