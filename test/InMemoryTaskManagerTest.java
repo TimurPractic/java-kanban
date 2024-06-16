@@ -1,3 +1,4 @@
+import org.junit.jupiter.api.BeforeEach;
 import ru.yandex.practicum.tasktracker.model.Epic;
 import ru.yandex.practicum.tasktracker.manager.InMemoryTaskManager;
 import ru.yandex.practicum.tasktracker.model.Subtask;
@@ -14,10 +15,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class InMemoryTaskManagerTest {
 
+    InMemoryTaskManager taskManager;
+
+
+    @BeforeEach
+    void setUp() {
+        taskManager = Managers.getDefault();
+    }
 
     @Test
     void addTaskTest() {
-        InMemoryTaskManager taskManager = Managers.getDefault();
         Task task = new Task();
         taskManager.addTask(task);
         assertNotNull(task, "Задача не найдена.");
@@ -26,7 +33,6 @@ class InMemoryTaskManagerTest {
 
     @Test
     void deleteTaskTest() {
-        InMemoryTaskManager taskManager = Managers.getDefault();
         Task task = new Task();
         taskManager.addTask(task);
         taskManager.deleteTask(task.getId());
@@ -36,7 +42,6 @@ class InMemoryTaskManagerTest {
 
     @Test
     void deleteAllTasksTest() {
-        InMemoryTaskManager taskManager = Managers.getDefault();
         Task task = new Task();
         taskManager.addTask(task);
         Task task2 = new Task();
@@ -48,7 +53,6 @@ class InMemoryTaskManagerTest {
 
     @Test
     void addEpicTest() {
-        InMemoryTaskManager taskManager = Managers.getDefault();
         Epic epic = new Epic();
         taskManager.addEpic(epic);
         assertNotNull(epic, "Задача не найдена.");
@@ -57,7 +61,6 @@ class InMemoryTaskManagerTest {
 
     @Test
     void deleteEpicTest() {
-        InMemoryTaskManager taskManager = Managers.getDefault();
         Epic epic = new Epic();
         taskManager.addEpic(epic);
         taskManager.deleteEpic(epic);
@@ -66,7 +69,6 @@ class InMemoryTaskManagerTest {
 
     @Test
     void deleteAllEpicsTest() {
-        InMemoryTaskManager taskManager = Managers.getDefault();
         Epic epic = new Epic();
         taskManager.addEpic(epic);
         Epic epic2 = new Epic();
@@ -78,7 +80,6 @@ class InMemoryTaskManagerTest {
 
     @Test
     void addSubTaskTest() {
-        InMemoryTaskManager taskManager = Managers.getDefault();
         Epic epic = new Epic();
         taskManager.addEpic(epic);
         Subtask subtask1 = new Subtask();
@@ -89,7 +90,6 @@ class InMemoryTaskManagerTest {
 
     @Test
     void deleteAllSubTasksTest() {
-        InMemoryTaskManager taskManager = Managers.getDefault();
         Epic epic = new Epic();
         taskManager.addEpic(epic);
         Subtask subtask1 = new Subtask();
@@ -109,7 +109,6 @@ class InMemoryTaskManagerTest {
 
     @Test
     void deletedSubtaskShouldNotMadeIdFreeToUseTest(){
-        InMemoryTaskManager taskManager = Managers.getDefault();
         Epic epic = new Epic();
         taskManager.addEpic(epic);
 

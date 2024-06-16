@@ -8,14 +8,14 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class ManagersTests {
 
     @Test
-    void shouldReturnNotNullHistoryManagerWhenInvokeGetDefaultHistory() {
+    void shouldReturnNotNullHistoryManager() {
         HistoryManager historyManager = Managers.getDefaultHistory();
 
         assertNotNull(historyManager);
     }
 
     @Test
-    void shouldReturnNotNullHistoryManagerWhenInvokeGetDefault() {
+    void shouldReturnNotNullTaskManager() {
         TaskManager taskManager = Managers.getDefault();
 
         assertNotNull(taskManager);
