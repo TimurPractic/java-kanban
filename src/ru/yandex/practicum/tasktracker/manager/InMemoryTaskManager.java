@@ -98,14 +98,15 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    public static Optional<LocalDateTime> findEarliestStartTime(List<Subtask> subtasks) {
-        return subtasks.stream()
+    public static LocalDateTime findEarliestStartTime(List<Subtask> subtasks) {
+        Optional<LocalDateTime> optionalStartTime = subtasks.stream()
                 .map(Subtask::getStartTime)
-                .filter(startTime -> startTime != null)
+                .filter(Objects::nonNull)
                 .min(Comparator.naturalOrder());
+
+        return optionalStartTime.orElse(null);
     }
 
-    @Override
     public void deleteEpic(Epic newEpic) {
         List<Integer> subtasksForDeletion = newEpic.getSubtasksIds();
         for (int subtaskId : subtasksForDeletion) {
@@ -214,13 +215,26 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void addSubTask(Subtask newSubTask) {
+        LocalDateTime newStartTime = newSubTask.getStartTime();
+        LocalDateTime newEndTime = newStartTime.plus(newSubTask.getDuration());
+        int currentEpicId = newSubTask.getEpicId();
+        Epic epic = getEpicById(currentEpicId);
+        List<Integer> epicSubtasksIds = epic.getSubtasksIds();
+        for (Integer subtaskId : epicSubtasksIds) {
+            Subtask existingSubTask = subtasks.get(subtaskId);
+            if (existingSubTask == null) {
+                continue;
+            }
+            LocalDateTime existingStartTime = existingSubTask.getStartTime();
+            LocalDateTime existingEndTime = existingStartTime.plus(existingSubTask.getDuration());
+            if (newStartTime.isBefore(existingEndTime) && newEndTime.isAfter(existingStartTime)) {
+                throw new IllegalArgumentException("Новый субтаск не может быть в тот же период что и уже существующие");
+            }
+        }
         int newId = idSequence++;
         newSubTask.setId(newId);
         newSubTask.setStatus(TaskStatus.NEW);
         subtasks.put(newSubTask.getId(), newSubTask);
-        int currentEpicId = newSubTask.getEpicId();
-        Epic epic = getEpicById(currentEpicId);
-        List<Integer> epicSubtasksIds = epic.getSubtasksIds();
         epicSubtasksIds.add(newSubTask.getId());
         epic.setSubtasksIds(epicSubtasksIds);
         checkEpicStatus(epic);
@@ -228,6 +242,7 @@ public class InMemoryTaskManager implements TaskManager {
         historyManager.add(newSubTask);
         prioritizedTasks.add(newSubTask);
     }
+
 
     @Override
     public void updateSubTask(Subtask subtask) {

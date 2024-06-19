@@ -12,6 +12,7 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class InMemoryTaskManagerTest {
 
@@ -83,6 +84,8 @@ class InMemoryTaskManagerTest {
         Epic epic = new Epic();
         taskManager.addEpic(epic);
         Subtask subtask1 = new Subtask();
+        subtask1.setStartTime(LocalDateTime.of(2024,5,14,20,10));
+        subtask1.setDuration(10);
         taskManager.addSubTask(subtask1);
         assertNotNull(taskManager.getSubtasks());
         assertEquals(1, taskManager.getSubtasks().size());
@@ -93,8 +96,12 @@ class InMemoryTaskManagerTest {
         Epic epic = new Epic();
         taskManager.addEpic(epic);
         Subtask subtask1 = new Subtask();
+        subtask1.setStartTime(LocalDateTime.of(2024,5,14,20,10));
+        subtask1.setDuration(10);
         taskManager.addSubTask(subtask1);
         Subtask subtask2 = new Subtask();
+        subtask2.setStartTime(LocalDateTime.of(2024,5,14,20,25));
+        subtask2.setDuration(11);
         taskManager.addSubTask(subtask2);
         subtask1.setEpicId(epic.getId());
         subtask2.setEpicId(epic.getId());
@@ -146,8 +153,53 @@ class InMemoryTaskManagerTest {
         taskManager.checkEpicStatus(epic);
 
         Subtask subtask4 = new Subtask();
+        subtask4.setStartTime(LocalDateTime.of(2024,5,15,20,22));
+        subtask4.setDuration(10);
         taskManager.addSubTask(subtask4);
         subtask4.setEpicId(epic.getId());
         assertEquals(4,subtask4.getId());
+    }
+
+    @Test
+    void newSubtaskShouldBeCheckedForTimeTest(){
+        Epic epic = new Epic();
+        taskManager.addEpic(epic);
+
+        Subtask subtask1 = new Subtask();
+        subtask1.setTitle("Subtask1");
+        subtask1.setDescription("This is subtask1");
+        subtask1.setStartTime(LocalDateTime.of(2024,5,14,20,0));
+        subtask1.setDuration(10);
+        taskManager.addSubTask(subtask1);
+        subtask1.setEpicId(epic.getId());
+        taskManager.checkEpicStatus(epic);
+        taskManager.setEpicDuration(epic);
+
+        Subtask subtask2 = new Subtask();
+        subtask2.setTitle("Subtask2");
+        subtask2.setDescription("This is subtask2");
+        subtask2.setStartTime(LocalDateTime.of(2024,5,14,20,11));
+        subtask2.setDuration(10);
+        taskManager.addSubTask(subtask2);
+        subtask2.setEpicId(epic.getId());
+        taskManager.checkEpicStatus(epic);
+        taskManager.setEpicDuration(epic);
+
+        Subtask subtask3 = new Subtask();
+        subtask3.setTitle("Subtask3");
+        subtask3.setDescription("This is subtask3");
+        subtask3.setStartTime(LocalDateTime.of(2024,5,14,20,19));
+        subtask3.setDuration(10);
+
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            taskManager.addSubTask(subtask3);
+        });
+        String expectedMessage = "Новый субтаск не может быть в тот же период что и уже существующие";
+        String actualMessage = exception.getMessage();
+        assertEquals(expectedMessage, actualMessage);
+
+        subtask3.setEpicId(epic.getId());
+        taskManager.checkEpicStatus(epic);
+        taskManager.setEpicDuration(epic);
     }
 }

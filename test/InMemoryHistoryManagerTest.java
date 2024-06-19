@@ -8,6 +8,7 @@ import ru.yandex.practicum.tasktracker.utils.Managers;
 import ru.yandex.practicum.tasktracker.manager.InMemoryHistoryManager;
 import ru.yandex.practicum.tasktracker.manager.InMemoryTaskManager;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -76,12 +77,18 @@ class InMemoryHistoryManagerTest {
         taskManager.addEpic(epic);
         Subtask subtask1 = new Subtask();
         subtask1.setEpicId(epic.getId());
+        subtask1.setStartTime(LocalDateTime.of(2024,5,14,20,10));
+        subtask1.setDuration(10);
         taskManager.addSubTask(subtask1);
         Subtask subtask2 = new Subtask();
         subtask2.setEpicId(epic.getId());
+        subtask2.setStartTime(LocalDateTime.of(2024,5,14,20,27));
+        subtask2.setDuration(11);
         taskManager.addSubTask(subtask2);
         Subtask subtask3 = new Subtask();
         subtask3.setEpicId(epic.getId());
+        subtask3.setStartTime(LocalDateTime.of(2024,5,14,20,45));
+        subtask3.setDuration(12);
         taskManager.addSubTask(subtask3);
         ArrayList<Task> rightOrder = new ArrayList<>();
         rightOrder.add(subtask1);
