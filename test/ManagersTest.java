@@ -10,14 +10,12 @@ class ManagersTests {
     @Test
     void shouldReturnNotNullHistoryManager() {
         HistoryManager historyManager = Managers.getDefaultHistory();
-
         assertNotNull(historyManager);
     }
 
     @Test
     void shouldReturnNotNullTaskManager() {
         TaskManager taskManager = Managers.getDefault();
-
         assertNotNull(taskManager);
     }
 }
