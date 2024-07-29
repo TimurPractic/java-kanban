@@ -29,13 +29,4 @@ public class BaseHttpHandler implements HttpHandler {
         h.getResponseBody().write(resp);
         h.close();
     }
-
-    public void sendHasInteractions(HttpExchange h, String text) throws IOException {
-        //для отправки ответа, если при создании или обновлении задача пересекается с уже существующими
-    }
-
-
-
-
-
 }
