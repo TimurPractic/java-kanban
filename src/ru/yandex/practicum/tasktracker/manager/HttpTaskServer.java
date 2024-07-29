@@ -35,9 +35,9 @@ public class HttpTaskServer {
 
     public HttpTaskServer(InMemoryTaskManager taskManager) {
         this.taskManager = taskManager;
-        gson = new GsonBuilder()
-                .registerTypeAdapter(Duration.class, new Adapters().new DurationAdapter())
-                .registerTypeAdapter(LocalDateTime.class, new Adapters().new LocalDateTimeAdapter())
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(LocalDateTime.class, new Adapters.LocalDateTimeAdapter())
+                .registerTypeAdapter(Duration.class, new Adapters.DurationAdapter())
                 .create();
         try {
             httpServer = HttpServer.create(new InetSocketAddress(HOSTNAME, PORT), 0);

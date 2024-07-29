@@ -76,12 +76,9 @@ public class EpicHandler extends BaseHttpHandler {
                 String idStr = pathParts[2];
                 try {
                     int id = Integer.parseInt(idStr);
-                    boolean success = taskManager.deleteEpic(id);
-                    if (success) {
-                        exchange.sendResponseHeaders(204, -1); // Успешно, нет содержимого
-                    } else {
-                        exchange.sendResponseHeaders(404, -1); // Эпик не найден
-                    }
+                    Epic epic = taskManager.getEpicById(id);
+                    taskManager.deleteEpic(epic);
+                    exchange.sendResponseHeaders(204, -1); // Успешно, нет содержимого
                 } catch (NumberFormatException e) {
                     exchange.sendResponseHeaders(400, -1); // Неверный запрос
                 }

@@ -117,9 +117,9 @@ public class TaskHandler extends BaseHttpHandler {
             String idStr = pathParts[2];
             try {
                 int id = Integer.parseInt(idStr);
-                task.setId(id);
-                taskManager.updateTask(task);
-                response = gson.toJson(task);
+                Task task2 = taskManager.getTaskById(id);
+                taskManager.updateTask(task2);
+                response = gson.toJson(task2);
                 resp = response.getBytes(StandardCharsets.UTF_8);
                 exchange.getResponseHeaders().add("Content-Type", "application/json;charset=utf-8");
                 exchange.sendResponseHeaders(200, resp.length); // Успешное обновление, код 200
@@ -128,9 +128,8 @@ public class TaskHandler extends BaseHttpHandler {
                 exchange.sendResponseHeaders(400, -1); // Неверный запрос
             }
         } else if (pathParts.length == 2) {
-            Task tasker = new Task();
-            taskManager.addTask(tasker);
-            response = gson.toJson(tasker);
+            taskManager.addTask(task);
+            response = gson.toJson(task);
             resp = response.getBytes(StandardCharsets.UTF_8);
             exchange.getResponseHeaders().add("Content-Type", "application/json;charset=utf-8");
             exchange.sendResponseHeaders(201, resp.length); // Успешное создание, код 201

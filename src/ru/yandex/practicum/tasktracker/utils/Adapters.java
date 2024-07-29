@@ -13,8 +13,7 @@ import java.time.LocalDateTime;
 import java.time.Duration;
 
 public class Adapters {
-    public class LocalDateTimeAdapter implements JsonSerializer<LocalDateTime>, JsonDeserializer<LocalDateTime> {
-
+    public static class LocalDateTimeAdapter implements JsonSerializer<LocalDateTime>, JsonDeserializer<LocalDateTime> {
         @Override
         public JsonElement serialize(LocalDateTime src, Type typeOfSrc, JsonSerializationContext context) {
             return new JsonPrimitive(src.toString());
@@ -26,8 +25,7 @@ public class Adapters {
         }
     }
 
-    public class DurationAdapter implements JsonSerializer<Duration>, JsonDeserializer<Duration> {
-
+    public static class DurationAdapter implements JsonSerializer<Duration>, JsonDeserializer<Duration> {
         @Override
         public JsonElement serialize(Duration src, Type typeOfSrc, JsonSerializationContext context) {
             return new JsonPrimitive(src.toString());
@@ -38,5 +36,4 @@ public class Adapters {
             return Duration.parse(json.getAsString());
         }
     }
-
 }

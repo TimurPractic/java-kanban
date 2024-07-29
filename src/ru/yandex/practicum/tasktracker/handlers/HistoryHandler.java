@@ -22,6 +22,7 @@ public class HistoryHandler extends BaseHttpHandler {
         if ("GET".equals(exchange.getRequestMethod())) {
             try {
                 Object history = historyManager.getHistory();
+                System.out.println();
                 String response = gson.toJson(history);
                 byte[] resp = response.getBytes(StandardCharsets.UTF_8);
                 exchange.getResponseHeaders().add("Content-Type", "application/json;charset=utf-8");

@@ -5,7 +5,7 @@ import ru.yandex.practicum.tasktracker.manager.TaskManager;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-class ManagersTests {
+class ManagersTest {
 
     @Test
     void shouldReturnNotNullHistoryManager() {
