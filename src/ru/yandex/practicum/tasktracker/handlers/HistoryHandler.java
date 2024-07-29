@@ -20,14 +20,21 @@ public class HistoryHandler extends BaseHttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         if ("GET".equals(exchange.getRequestMethod())) {
-            String response = gson.toJson(historyManager.getHistory());
-            byte[] resp = response.getBytes(StandardCharsets.UTF_8);
-            exchange.getResponseHeaders().add("Content-Type", "application/json;charset=utf-8");
-            exchange.sendResponseHeaders(200, resp.length);
-            exchange.getResponseBody().write(resp);
-            exchange.close();
+            try {
+                Object history = historyManager.getHistory();
+                String response = gson.toJson(history);
+                byte[] resp = response.getBytes(StandardCharsets.UTF_8);
+                exchange.getResponseHeaders().add("Content-Type", "application/json;charset=utf-8");
+                exchange.sendResponseHeaders(200, resp.length);
+                exchange.getResponseBody().write(resp);
+            } catch (Exception e) {
+                exchange.sendResponseHeaders(500, -1); // Внутренняя ошибка сервера
+            } finally {
+                exchange.close();
+            }
         } else {
             exchange.sendResponseHeaders(405, -1); // Метод не разрешен
+            exchange.close();
         }
     }
 }
