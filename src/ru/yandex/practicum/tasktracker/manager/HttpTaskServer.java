@@ -8,7 +8,6 @@ import ru.yandex.practicum.tasktracker.handlers.HistoryHandler;
 import ru.yandex.practicum.tasktracker.handlers.PrioritizedHandler;
 import ru.yandex.practicum.tasktracker.handlers.SubtaskHandler;
 import ru.yandex.practicum.tasktracker.handlers.TaskHandler;
-import ru.yandex.practicum.tasktracker.model.Task;
 import ru.yandex.practicum.tasktracker.utils.Adapters;
 import ru.yandex.practicum.tasktracker.utils.Managers;
 
@@ -16,7 +15,6 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.List;
 
 public class HttpTaskServer {
 
