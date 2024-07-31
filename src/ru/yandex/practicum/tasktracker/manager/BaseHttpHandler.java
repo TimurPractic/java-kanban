@@ -4,10 +4,11 @@ import com.sun.net.httpserver.HttpExchange;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import com.sun.net.httpserver.HttpHandler;
+import ru.yandex.practicum.tasktracker.utils.Managers;
 
 public class BaseHttpHandler implements HttpHandler {
 
-    FileBackedTaskManager taskManager = new FileBackedTaskManager();
+    TaskManager taskManager = Managers.getDefault();
 
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {

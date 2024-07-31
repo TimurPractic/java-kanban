@@ -4,6 +4,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.tasktracker.manager.HttpTaskServer;
+import ru.yandex.practicum.tasktracker.manager.InMemoryHistoryManager;
 import ru.yandex.practicum.tasktracker.manager.InMemoryTaskManager;
 import ru.yandex.practicum.tasktracker.model.Task;
 import ru.yandex.practicum.tasktracker.utils.Adapters;
@@ -26,12 +27,14 @@ class PrioritizedHandlerTest {
     private static final String HOSTNAME = "localhost";
     private static final int PORT = 8080;
     private static InMemoryTaskManager taskManager;
+    private static InMemoryHistoryManager historyManager;
     private static Gson gson = new Gson();
 
     @BeforeAll
     static void setUp() throws IOException {
         taskManager = Managers.getDefault();
-        httpTaskServer = new HttpTaskServer(taskManager);
+        historyManager = Managers.getDefaultHistory();
+        httpTaskServer = new HttpTaskServer(taskManager, historyManager);
         taskManager.deleteAllTasks();
         taskManager.deleteAllSubTasks();
         taskManager.deleteAllEpics();

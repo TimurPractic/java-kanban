@@ -19,22 +19,23 @@ import java.time.LocalDateTime;
 public class HttpTaskServer {
 
     public static void main(String[] args) {
-        InMemoryTaskManager taskManager = Managers.getDefault();
+        TaskManager taskManager = Managers.getDefault();
         HistoryManager historyManager = Managers.getDefaultHistory();
-        HttpTaskServer server = new HttpTaskServer(taskManager);
+        HttpTaskServer server = new HttpTaskServer(taskManager, historyManager);
 
         server.start();
     }
 
     private Gson gson;
-    private InMemoryTaskManager taskManager;
+    private TaskManager taskManager;
     private HistoryManager historyManager;
     private HttpServer httpServer;
     private static final String HOSTNAME = "localhost";
     private static final int PORT = 8080;
 
-    public HttpTaskServer(InMemoryTaskManager taskManager) {
+    public HttpTaskServer(TaskManager taskManager, HistoryManager historyManager) {
         this.taskManager = taskManager;
+        this.historyManager = historyManager;
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(LocalDateTime.class, new Adapters.LocalDateTimeAdapter())
                 .registerTypeAdapter(Duration.class, new Adapters.DurationAdapter())
@@ -44,7 +45,7 @@ public class HttpTaskServer {
             httpServer.createContext("/tasks", new TaskHandler(taskManager, gson));
             httpServer.createContext("/subtasks", new SubtaskHandler(taskManager, gson));
             httpServer.createContext("/epics", new EpicHandler(taskManager, gson));
-            httpServer.createContext("/history", new HistoryHandler(historyManager, gson));
+            httpServer.createContext("/history", new HistoryHandler(historyManager, taskManager, gson));
             httpServer.createContext("/prioritized", new PrioritizedHandler(taskManager, gson));
         } catch (IOException e) {
             throw new RuntimeException("FAIL: Ошибка создания http-сервера на порте " + PORT + ".", e);

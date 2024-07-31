@@ -5,10 +5,12 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.tasktracker.handlers.EpicHandler;
 import ru.yandex.practicum.tasktracker.manager.HttpTaskServer;
+import ru.yandex.practicum.tasktracker.manager.InMemoryHistoryManager;
 import ru.yandex.practicum.tasktracker.manager.InMemoryTaskManager;
 import ru.yandex.practicum.tasktracker.model.Epic;
 import ru.yandex.practicum.tasktracker.model.Subtask;
 import ru.yandex.practicum.tasktracker.model.Task;
+import ru.yandex.practicum.tasktracker.model.TaskStatus;
 import ru.yandex.practicum.tasktracker.utils.Adapters;
 import ru.yandex.practicum.tasktracker.utils.Managers;
 
@@ -29,12 +31,14 @@ class EpicHandlerTest {
     private static final String HOSTNAME = "localhost";
     private static final int PORT = 8080;
     private static InMemoryTaskManager taskManager;
+    private static InMemoryHistoryManager historyManager;
     private static Gson gson = new Gson();
 
     @BeforeAll
     static void setUp() throws IOException {
         taskManager = Managers.getDefault();
-        httpTaskServer = new HttpTaskServer(taskManager);
+        historyManager = Managers.getDefaultHistory();
+        httpTaskServer = new HttpTaskServer(taskManager, historyManager);
         taskManager.deleteAllTasks();
         taskManager.deleteAllSubTasks();
         taskManager.deleteAllEpics();
@@ -59,6 +63,7 @@ class EpicHandlerTest {
         Epic epic = new Epic();
         epic.setTitle("Epic Test");
         epic.setDescription("Epic Description");
+        taskManager.addEpic(epic);
         String epicJson = gson.toJson(epic);
 
         HttpRequest request = HttpRequest.newBuilder()
@@ -75,9 +80,9 @@ class EpicHandlerTest {
 
         List<Epic> epics = taskManager.getEpics();
         assertNotNull(epics, "Epics list is null.");
-        assertEquals(1, epics.size(), "Incorrect number of epics.");
-        assertEquals(epic.getTitle(), epics.get(0).getTitle(), "Epic title does not match.");
-        assertEquals(epic.getDescription(), epics.get(0).getDescription(), "Epic description does not match.");
+        assertEquals(3, epics.size(), "Incorrect number of epics.");
+        assertEquals(epic.getTitle(), epics.get(2).getTitle(), "Epic title does not match.");
+        assertEquals(epic.getDescription(), epics.get(2).getDescription(), "Epic description does not match.");
     }
 
     @Test
@@ -88,6 +93,11 @@ class EpicHandlerTest {
         taskManager.addEpic(epic);
         Subtask subtask = new Subtask();
         subtask.setEpicId(epic.getId());
+        subtask.setTitle("Default");
+        subtask.setStatus(TaskStatus.NEW);
+        subtask.setDescription("Default");
+        subtask.setStartTime(LocalDateTime.now().withNano(0));
+        subtask.setDuration(10);
         taskManager.addSubTask(subtask);
 
         HttpRequest request = HttpRequest.newBuilder()

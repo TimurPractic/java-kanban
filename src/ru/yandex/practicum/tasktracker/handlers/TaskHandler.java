@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import ru.yandex.practicum.tasktracker.manager.BaseHttpHandler;
 import ru.yandex.practicum.tasktracker.manager.InMemoryTaskManager;
+import ru.yandex.practicum.tasktracker.manager.TaskManager;
 import ru.yandex.practicum.tasktracker.model.Task;
 
 import java.io.IOException;
@@ -12,10 +13,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class TaskHandler extends BaseHttpHandler {
-    private final InMemoryTaskManager taskManager;
+    private final TaskManager taskManager;
     private final Gson gson;
 
-    public TaskHandler(InMemoryTaskManager taskManager, Gson gson) {
+    public TaskHandler(TaskManager taskManager, Gson gson) {
         this.taskManager = taskManager;
         this.gson = gson;
     }

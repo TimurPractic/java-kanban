@@ -4,18 +4,21 @@ import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import ru.yandex.practicum.tasktracker.manager.BaseHttpHandler;
 import ru.yandex.practicum.tasktracker.manager.InMemoryTaskManager;
+import ru.yandex.practicum.tasktracker.manager.TaskManager;
 import ru.yandex.practicum.tasktracker.model.Subtask;
 import ru.yandex.practicum.tasktracker.model.Task;
+import ru.yandex.practicum.tasktracker.model.TaskStatus;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class SubtaskHandler extends BaseHttpHandler {
-    private final InMemoryTaskManager taskManager;
+    private final TaskManager taskManager;
     private final Gson gson;
 
-    public SubtaskHandler(InMemoryTaskManager taskManager, Gson gson) {
+    public SubtaskHandler(TaskManager taskManager, Gson gson) {
         this.taskManager = taskManager;
         this.gson = gson;
     }
@@ -125,6 +128,14 @@ public class SubtaskHandler extends BaseHttpHandler {
             }
         } else if (pathParts.length == 2) {
             Subtask subtask = new Subtask();
+
+            subtask.setEpicId(0);
+            subtask.setTitle("Default");
+            subtask.setStatus(TaskStatus.NEW);
+            subtask.setDescription("Default");
+            subtask.setStartTime(LocalDateTime.now().withNano(0));
+            subtask.setDuration(10);
+
             taskManager.addSubTask(subtask);
             response = gson.toJson(subtask);
             resp = response.getBytes(StandardCharsets.UTF_8);

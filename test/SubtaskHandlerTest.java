@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.tasktracker.handlers.SubtaskHandler;
 import ru.yandex.practicum.tasktracker.manager.HttpTaskServer;
+import ru.yandex.practicum.tasktracker.manager.InMemoryHistoryManager;
 import ru.yandex.practicum.tasktracker.manager.InMemoryTaskManager;
 import ru.yandex.practicum.tasktracker.model.Epic;
 import ru.yandex.practicum.tasktracker.model.Subtask;
@@ -31,6 +32,7 @@ class SubtaskHandlerTest {
     private static final String HOSTNAME = "localhost";
     private static final int PORT = 8080;
     private static InMemoryTaskManager taskManager;
+    private static InMemoryHistoryManager historyManager;
     private static Gson gson = new Gson();
     Subtask subtask = new Subtask();
     Epic epic = new Epic();
@@ -38,7 +40,8 @@ class SubtaskHandlerTest {
     @BeforeEach
     void setUp() throws IOException {
         taskManager = Managers.getDefault();
-        httpTaskServer = new HttpTaskServer(taskManager);
+        historyManager = Managers.getDefaultHistory();
+        httpTaskServer = new HttpTaskServer(taskManager, historyManager);
         gson = new GsonBuilder()
                 .registerTypeAdapter(LocalDateTime.class, new Adapters.LocalDateTimeAdapter())
                 .registerTypeAdapter(Duration.class, new Adapters.DurationAdapter())
@@ -76,7 +79,7 @@ class SubtaskHandlerTest {
         HttpClient client = HttpClient.newHttpClient();
 
         String subtaskJson = gson.toJson(subtask);
-//        System.out.println(epic);
+        System.out.println(epic);
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("http://localhost:" + PORT + "/subtasks"))
@@ -86,14 +89,16 @@ class SubtaskHandlerTest {
                 .build();
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
         System.out.println("Код ответа: " + response.statusCode());
         System.out.println("Тело ответа: " + response.body());
 
         assertEquals(201, response.statusCode(), "Failed to add new subtask.");
 
         List<Subtask> subtasks = taskManager.getSubtasks();
+        System.out.println(subtasks);
         assertNotNull(subtasks, "Subtasks list is null.");
-        assertEquals(1, subtasks.size(), "Incorrect number of subtasks.");
+        assertEquals(2, subtasks.size(), "Incorrect number of subtasks.");
         assertEquals(subtask, subtasks.get(0), "Subtask does not match.");
     }
 
@@ -124,7 +129,7 @@ class SubtaskHandlerTest {
     @Test
     void deleteSubtaskTest() throws IOException, InterruptedException {
         Subtask subtask = new Subtask();
-        subtask.setId(1);
+        subtask.setId(11);
         subtask.setTitle("Test Subtask");
         subtask.setDescription("Testing subtask");
         subtask.setStatus(TaskStatus.NEW);

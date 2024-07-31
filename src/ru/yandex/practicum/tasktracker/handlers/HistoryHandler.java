@@ -4,15 +4,20 @@ import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import ru.yandex.practicum.tasktracker.manager.BaseHttpHandler;
 import ru.yandex.practicum.tasktracker.manager.HistoryManager;
+import ru.yandex.practicum.tasktracker.manager.TaskManager;
+import ru.yandex.practicum.tasktracker.model.Task;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 public class HistoryHandler extends BaseHttpHandler {
+    private final TaskManager taskManager;
     private final HistoryManager historyManager;
     private final Gson gson;
 
-    public HistoryHandler(HistoryManager historyManager, Gson gson) {
+    public HistoryHandler(HistoryManager historyManager, TaskManager taskManager, Gson gson) {
+        this.taskManager = taskManager;
         this.historyManager = historyManager;
         this.gson = gson;
     }
@@ -21,8 +26,8 @@ public class HistoryHandler extends BaseHttpHandler {
     public void handle(HttpExchange exchange) throws IOException {
         if ("GET".equals(exchange.getRequestMethod())) {
             try {
-                Object history = historyManager.getHistory();
-                System.out.println();
+                List<Task> history = historyManager.getHistory();
+                System.out.println(history);
                 String response = gson.toJson(history);
                 byte[] resp = response.getBytes(StandardCharsets.UTF_8);
                 exchange.getResponseHeaders().add("Content-Type", "application/json;charset=utf-8");
