@@ -5,6 +5,7 @@ import com.sun.net.httpserver.HttpExchange;
 import ru.yandex.practicum.tasktracker.manager.BaseHttpHandler;
 import ru.yandex.practicum.tasktracker.manager.TaskManager;
 import ru.yandex.practicum.tasktracker.model.Epic;
+import ru.yandex.practicum.tasktracker.model.HttpMethod;
 import ru.yandex.practicum.tasktracker.model.Task;
 
 import java.io.IOException;
@@ -23,18 +24,21 @@ public class EpicHandler extends BaseHttpHandler {
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        String method = exchange.getRequestMethod();
+        HttpMethod httpMethod = parseHttpMethod(exchange);
+        if (httpMethod == null) {
+            return;
+        }
 
-        switch (method) {
-            case "GET":
+        switch (httpMethod)  {
+            case GET:
                 handleGet(exchange);
                 break;
 
-            case "DELETE":
+            case DELETE:
                 handleDelete(exchange);
                 break;
 
-            case "POST":
+            case POST:
                 handlePost(exchange);
                 break;
             default:
