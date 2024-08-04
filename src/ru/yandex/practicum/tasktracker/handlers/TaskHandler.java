@@ -49,8 +49,6 @@ public class TaskHandler extends BaseHttpHandler {
     private void handleGet(HttpExchange exchange) throws IOException {
         String path = exchange.getRequestURI().getPath();
         String[] pathParts = path.split("/");
-        String response;
-        byte[] resp;
 
         if (pathParts.length == 3) {
             String idStr = pathParts[2];
@@ -60,22 +58,14 @@ public class TaskHandler extends BaseHttpHandler {
                 if (task == null) {
                     exchange.sendResponseHeaders(404, -1); // Задача не найдена
                 } else {
-                    response = gson.toJson(task);
-                    resp = response.getBytes(StandardCharsets.UTF_8);
-                    exchange.getResponseHeaders().add("Content-Type", "application/json;charset=utf-8");
-                    exchange.sendResponseHeaders(200, resp.length);
-                    exchange.getResponseBody().write(resp);
+                    sendJsonResponse(exchange, 200, task);
                 }
             } catch (NumberFormatException e) {
                 exchange.sendResponseHeaders(400, -1); // Неверный запрос
             }
         } else {
-            List<Task> tasks = taskManager.getTasks(); // Предположим, что у вас есть список задач
-            response = gson.toJson(tasks); // Преобразование списка в JSON строку
-            resp = response.getBytes(StandardCharsets.UTF_8);
-            exchange.getResponseHeaders().add("Content-Type", "application/json;charset=utf-8");
-            exchange.sendResponseHeaders(200, resp.length);
-            exchange.getResponseBody().write(resp);
+            List<Task> tasks = taskManager.getTasks();
+            sendJsonResponse(exchange, 200, tasks);
         }
         exchange.getResponseBody().close();
     }
@@ -83,8 +73,6 @@ public class TaskHandler extends BaseHttpHandler {
     private void handleDelete(HttpExchange exchange) throws IOException {
         String path = exchange.getRequestURI().getPath();
         String[] pathParts = path.split("/");
-        String response;
-        byte[] resp;
 
         if (pathParts.length == 3) {
             String idStr = pathParts[2];
@@ -92,12 +80,7 @@ public class TaskHandler extends BaseHttpHandler {
                 int id = Integer.parseInt(idStr);
                 taskManager.deleteTask(id);
                 String itsDeleted = "Удалено!";
-                response = gson.toJson(itsDeleted);
-                resp = response.getBytes(StandardCharsets.UTF_8);
-                exchange.getResponseHeaders().add("Content-Type", "application/json;charset=utf-8");
-                exchange.sendResponseHeaders(204, resp.length);
-                exchange.getResponseBody().write(resp);
-                exchange.getResponseBody().close();
+                sendJsonResponse(exchange, 204, itsDeleted);
             } catch (NumberFormatException e) {
                 exchange.sendResponseHeaders(400, -1); // Неверный запрос
             }
@@ -109,8 +92,6 @@ public class TaskHandler extends BaseHttpHandler {
     private void handlePost(HttpExchange exchange) throws IOException {
         String path = exchange.getRequestURI().getPath();
         String[] pathParts = path.split("/");
-        String response;
-        byte[] resp;
 
         InputStream requestBody = exchange.getRequestBody();
         String requestBodyStr = new String(requestBody.readAllBytes(), StandardCharsets.UTF_8);
@@ -122,24 +103,24 @@ public class TaskHandler extends BaseHttpHandler {
                 int id = Integer.parseInt(idStr);
                 Task task2 = taskManager.getTaskById(id);
                 taskManager.updateTask(task2);
-                response = gson.toJson(task2);
-                resp = response.getBytes(StandardCharsets.UTF_8);
-                exchange.getResponseHeaders().add("Content-Type", "application/json;charset=utf-8");
-                exchange.sendResponseHeaders(200, resp.length); // Успешное обновление, код 200
-                exchange.getResponseBody().write(resp);
+                sendJsonResponse(exchange, 201, task2);
             } catch (NumberFormatException e) {
                 exchange.sendResponseHeaders(400, -1); // Неверный запрос
             }
         } else if (pathParts.length == 2) {
             taskManager.addTask(task);
-            response = gson.toJson(task);
-            resp = response.getBytes(StandardCharsets.UTF_8);
-            exchange.getResponseHeaders().add("Content-Type", "application/json;charset=utf-8");
-            exchange.sendResponseHeaders(201, resp.length); // Успешное создание, код 201
-            exchange.getResponseBody().write(resp);
+            sendJsonResponse(exchange, 201, task);
         } else {
             exchange.sendResponseHeaders(400, -1); // Неверный запрос
         }
         exchange.getResponseBody().close();
+    }
+
+    public void sendJsonResponse(HttpExchange exchange, int statusCode, Object responseObj) throws IOException {
+        String response = gson.toJson(responseObj);
+        byte[] resp = response.getBytes(StandardCharsets.UTF_8);
+        exchange.getResponseHeaders().add("Content-Type", "application/json;charset=utf-8");
+        exchange.sendResponseHeaders(statusCode, resp.length);
+        exchange.getResponseBody().write(resp);
     }
 }

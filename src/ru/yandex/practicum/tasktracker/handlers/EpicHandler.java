@@ -50,19 +50,13 @@ public class EpicHandler extends BaseHttpHandler {
     private void handleGet(HttpExchange exchange) throws IOException {
         String path = exchange.getRequestURI().getPath();
         String[] pathParts = path.split("/");
-        String response;
-        byte[] resp;
 
         if (pathParts.length == 4 && "subtasks".equals(pathParts[3])) {
             String idStr = pathParts[2];
             try {
                 int id = Integer.parseInt(idStr);
                 List<Task> subtasks = taskManager.getSubtasksFromEpicById(id);
-                response = gson.toJson(subtasks);
-                resp = response.getBytes(StandardCharsets.UTF_8);
-                exchange.getResponseHeaders().add("Content-Type", "application/json;charset=utf-8");
-                exchange.sendResponseHeaders(200, resp.length);
-                exchange.getResponseBody().write(resp);
+                sendJsonResponse(exchange,200,subtasks);
             } catch (NumberFormatException e) {
                 exchange.sendResponseHeaders(400, -1); // Неверный запрос
             }
@@ -103,15 +97,18 @@ public class EpicHandler extends BaseHttpHandler {
             Epic epic = gson.fromJson(requestBodyStr, Epic.class);
 
             taskManager.addEpic(epic);
-            String response = gson.toJson(epic);
-            byte[] resp = response.getBytes(StandardCharsets.UTF_8);
-            exchange.getResponseHeaders().add("Content-Type", "application/json;charset=utf-8");
-            exchange.sendResponseHeaders(201, resp.length); // Успешное создание, код 201
-            exchange.getResponseBody().write(resp);
+            sendJsonResponse(exchange,201,epic);
             exchange.getResponseBody().close();
         } else {
             exchange.sendResponseHeaders(405, -1); // Метод не разрешен
         }
     }
 
+    public void sendJsonResponse(HttpExchange exchange, int statusCode, Object responseObj) throws IOException {
+        String response = gson.toJson(responseObj);
+        byte[] resp = response.getBytes(StandardCharsets.UTF_8);
+        exchange.getResponseHeaders().add("Content-Type", "application/json;charset=utf-8");
+        exchange.sendResponseHeaders(statusCode, resp.length);
+        exchange.getResponseBody().write(resp);
+    }
 }

@@ -27,12 +27,7 @@ public class HistoryHandler extends BaseHttpHandler {
         if ("GET".equals(exchange.getRequestMethod())) {
             try {
                 List<Task> history = historyManager.getHistory();
-                System.out.println(history);
-                String response = gson.toJson(history);
-                byte[] resp = response.getBytes(StandardCharsets.UTF_8);
-                exchange.getResponseHeaders().add("Content-Type", "application/json;charset=utf-8");
-                exchange.sendResponseHeaders(200, resp.length);
-                exchange.getResponseBody().write(resp);
+                sendJsonResponse(exchange, 200, history);
             } catch (Exception e) {
                 exchange.sendResponseHeaders(500, -1); // Внутренняя ошибка сервера
             } finally {
@@ -42,5 +37,13 @@ public class HistoryHandler extends BaseHttpHandler {
             exchange.sendResponseHeaders(405, -1); // Метод не разрешен
             exchange.close();
         }
+    }
+
+    public void sendJsonResponse(HttpExchange exchange, int statusCode, Object responseObj) throws IOException {
+        String response = gson.toJson(responseObj);
+        byte[] resp = response.getBytes(StandardCharsets.UTF_8);
+        exchange.getResponseHeaders().add("Content-Type", "application/json;charset=utf-8");
+        exchange.sendResponseHeaders(statusCode, resp.length);
+        exchange.getResponseBody().write(resp);
     }
 }
