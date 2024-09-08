@@ -1,5 +1,7 @@
 package ru.yandex.practicum.tasktracker.model;
 
+import java.util.Objects;
+
 public class Subtask extends Task {
     private int epicId;
 
@@ -17,4 +19,19 @@ public class Subtask extends Task {
                 + "," + getDescription() + "," + epicId + "," + getStartTime()
                 + "," + getDuration() + "," + getEndTime();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Subtask)) return false;
+        if (!super.equals(o)) return false;
+        Subtask subtask = (Subtask) o;
+        return epicId == subtask.epicId;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), epicId);
+    }
+
 }

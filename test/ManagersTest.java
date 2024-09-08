@@ -5,19 +5,17 @@ import ru.yandex.practicum.tasktracker.manager.TaskManager;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-class ManagersTests {
+class ManagersTest {
 
     @Test
     void shouldReturnNotNullHistoryManager() {
         HistoryManager historyManager = Managers.getDefaultHistory();
-
         assertNotNull(historyManager);
     }
 
     @Test
     void shouldReturnNotNullTaskManager() {
         TaskManager taskManager = Managers.getDefault();
-
         assertNotNull(taskManager);
     }
 }
